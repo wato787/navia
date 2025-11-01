@@ -1,6 +1,6 @@
-import Map, {
-  NavigationControl,
+import MapComponent, {
   GeolocateControl,
+  NavigationControl,
   ScaleControl,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -21,7 +21,7 @@ const TopPage = () => {
 
   return (
     <div className={styles.map}>
-      <Map
+      <MapComponent
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={{
           longitude: 139.767125,
@@ -41,7 +41,7 @@ const TopPage = () => {
           positionOptions={{ enableHighAccuracy: true }}
         />
         <ScaleControl unit="metric" />
-      </Map>
+      </MapComponent>
     </div>
   );
 };
