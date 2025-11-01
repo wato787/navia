@@ -15,3 +15,23 @@ run = [
   "bun run --cwd apps/frontend build",
   "bun run --cwd apps/backend build"
 ]
+
+[tasks.lint]
+description = "Run Biome lint across the monorepo"
+run = "bunx biome lint"
+
+[tasks."lint:fix"]
+description = "Apply safe Biome lint fixes"
+run = "bunx biome lint --apply"
+
+[tasks.format]
+description = "Format code with Biome"
+run = "bunx biome format --write"
+
+[tasks."format:check"]
+description = "Check formatting without writing"
+run = "bunx biome format --check"
+
+[tasks.check]
+description = "Run Biome check (lint + format)"
+run = "bunx biome check"

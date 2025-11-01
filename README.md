@@ -34,6 +34,28 @@ mise run dev
 ```bash
 mise run build
 ```
+## コード品質チェック（Biome）
+
+フロントエンド／バックエンド双方の TypeScript コードを [Biome](https://biomejs.dev/) で統一的に整えています。ルート直下の `biome.json` で共通設定を定義し、各アプリ向けのグローバルをオーバーライドするモノレポ構成です。Biome 関連タスクも `.mise.toml` に登録しているので、mise だけで完結します。
+
+```bash
+# 静的解析（自動修正なし）
+mise run lint
+
+# フォーマット・Lint・安全な修正の一括チェック（CI向け）
+mise run check
+
+# フォーマットを適用
+mise run format
+
+# フォーマットの差分のみ確認
+mise run format:check
+
+# Lintの安全な修正を適用
+mise run lint:fix
+```
+
+`mise run` は内部で `bunx biome ...` を呼び出しています。必要に応じて直接 `bunx biome ...` を使ったり、さらにカスタムタスクを追加することもできます。CI では `mise run check` を使うことで、Lint とフォーマットの両方を同時に検証できます。
 
 ## ディレクトリ構成
 
