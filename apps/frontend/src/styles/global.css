@@ -9,30 +9,3 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: #f2f2f2;
 }
-
-.top-map {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-}
-
-.top-map__canvas {
-  position: absolute;
-  inset: 0;
-}
-
-.top-map__fallback {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.92);
-  color: #1f2933;
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
-  max-width: 320px;
-  text-align: center;
-  line-height: 1.5;
-  font-weight: 500;
-}

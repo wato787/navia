@@ -2,10 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import styles from "./top.module.css";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 
-export const Route = createFileRoute("./routes/top/route")({
+export const Route = createFileRoute("/" as never)({
   component: TopPage
 });
 
@@ -20,7 +21,7 @@ function TopPage() {
     }
 
     if (!MAPBOX_TOKEN) {
-      setError("Mapbox access token is missing. Please set VITE_MAPBOX_ACCESS_TOKEN.");
+      setError("Mapbox ???????????????????????? VITE_MAPBOX_ACCESS_TOKEN ??????????");
       return;
     }
 
@@ -53,9 +54,9 @@ function TopPage() {
   }, []);
 
   return (
-    <div className="top-map">
-      {error ? <div className="top-map__fallback">{error}</div> : null}
-      <div ref={containerRef} className="top-map__canvas" aria-label="Top page map" />
+    <div className={styles.map}>
+      {error ? <div className={styles.fallback}>{error}</div> : null}
+      <div ref={containerRef} className={styles.canvas} aria-label="?????????" />
     </div>
   );
 }
