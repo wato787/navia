@@ -4,16 +4,22 @@ import MapComponent, {
   ScaleControl,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import styles from "./top.module.css";
+
+import styles from "./index.module.css";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
+const INITIAL_VIEW_STATE = {
+  longitude: 139.767125,
+  latitude: 35.681236,
+  zoom: 12,
+};
 
-const TopPage = () => {
+export function RouteComponent() {
   if (!MAPBOX_TOKEN) {
     return (
       <div className={styles.map}>
         <div className={styles.fallback}>
-          Mapboxアクセストークンが必要です。VITE_MAPBOX_ACCESS_TOKENを設定してください。
+          Mapbox??????????????VITE_MAPBOX_ACCESS_TOKEN??????????
         </div>
       </div>
     );
@@ -23,11 +29,7 @@ const TopPage = () => {
     <div className={styles.map}>
       <MapComponent
         mapboxAccessToken={MAPBOX_TOKEN}
-        initialViewState={{
-          longitude: 139.767125,
-          latitude: 35.681236,
-          zoom: 12,
-        }}
+        initialViewState={INITIAL_VIEW_STATE}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         pitchWithRotate={true}
@@ -44,6 +46,4 @@ const TopPage = () => {
       </MapComponent>
     </div>
   );
-};
-
-export default TopPage;
+}

@@ -1,6 +1,15 @@
-# TanStack Router & Query 設定ガイド
+# TanStack Router ベストプラクティス
 
-AI Shift記事を参考に、TanStack Router & Queryを使用したSPAアプリケーションの構築方法を説明します。`apps/frontend` ディレクトリに実装されているコードを参考にしてください。
+TanStack Router v1 系の推奨パターンと、`apps/frontend` における実装方針をまとめます。React Query との統合や、ファイルベースルーティングを前提としています。
+
+## コア原則
+
+- **ファイルベースルーティング**: `@tanstack/router-plugin` を使い、`src/routes` 配下で `__root.tsx` / `index.tsx` などのファイル構成を保つ。
+- **型付きの共有コンテキスト**: `createRootRouteWithContext` と `createRouter` に同じ `RouterContext` 型を渡し、QueryClient やセッション情報を一元管理する。
+- **URL を単一の状態源に**: `validateSearch`・`loaderDeps` で Search Params をスキーマ化し、`Route.useSearch()` 経由でコンポーネントに注入する。
+- **データプリフェッチ & Suspense**: ルート `loader` で `queryClient.ensureQueryData` を呼び出し、`Suspense` + `pendingComponent` / `errorComponent` を組み合わせる。
+- **開発者体験の最適化**: `defaultPreload: "intent"` による先読み、`TanStackRouterDevtools` の開発時限定表示、`routeTree.gen.ts` の自動生成を CI に組み込む。
+- **副作用の境界管理**: `beforeLoad` / `meta` / `shouldReload` などルート専用 API を使い、副作用ロジックをコンポーネント外に逃す。
 
 ## セットアップ
 
@@ -10,114 +19,73 @@ bun add --cwd apps/frontend \
   @tanstack/react-query @tanstack/router-plugin
 ```
 
-- `vite.config.ts` に `tanstackRouter({ routesDirectory: "./src/routes" })` を追加して、ルート生成を有効化する
-- **注意**: `@tanstack/router-vite-plugin` は非推奨です。代わりに `@tanstack/router-plugin` を使用してください
-- QueryClient を `router.ts` で設定し、Router と Context を通じて React Query Provider として使用する
+- `apps/frontend/vite.config.ts` に `tanstackRouter({ routesDirectory: "./src/routes" })` を登録する。
+- plugin が生成した `routeTree.gen.ts` を `router.ts` で読み込み、`createRouter` の `routeTree` に渡す。
+- QueryClient を `RouterContext` に含め、`App.tsx` で `QueryClientProvider` と `RouterProvider` をネストする。
+- CI では `bun vite --cwd apps/frontend tanstack-router generate` を実行し、`routeTree.gen.ts` の破壊的変更を検出する。
 
-## ディレクトリ構成
+## ディレクトリ構成 (推奨例)
 
 ```
 apps/frontend/src/
-  routes/
-    __root.tsx
-    home/
-      -components/
-      -functions/
-      -api/
-      -types/
-      route.tsx
-      route.lazy.tsx
-    about/
-      ...同様
   router.ts
   routeTree.gen.ts
-```
-
-各ルートディレクトリは feature-based の layer アーキテクチャで、`-components/-api/-types/-functions` のプレフィックスでディレクトリを分離して整理する。
-
-## 実装方法
-
-- `__root.tsx` で `createRootRouteWithContext` を使用して Devtools を有効化
-- 各ルートの `route.tsx` で `createFileRoute` を使用してルートを定義する
-  - `validateSearch` で search params を検証する
-  - `loaderDeps` と `loader` で QueryClient を使って preload する
-  - `pendingComponent` / `errorComponent` でローディング・エラー状態を表示する
-  - `React.lazy` を使って `route.lazy.tsx` で UI コンポーネントを実装する
-
-```20:40:apps/frontend/src/routes/home/route.tsx
-export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    audience: parseAudience(search.audience)
-  }),
-  loaderDeps: ({ search }) => ({
-    audience: search.audience as Audience
-  }),
-  loader: async ({ context, deps }) => {
-    await context.queryClient.ensureQueryData(homeQueryOptions(deps.audience));
-    return { audience: deps.audience };
-  },
-  pendingComponent: PendingState,
-  errorComponent: ({ error }) => <ErrorState message={error.message ?? "Unknown error"} />,
-  component: () => (
-    <Suspense fallback={<PendingState />}>
-      <HomeRouteComponent />
-    </Suspense>
-  )
-});
-```
-
-```1:56:apps/frontend/src/routes/home/route.lazy.tsx
-export function HomeRoute() {
-  const navigate = useNavigate({ from: "/" });
-  const search = Route.useSearch();
-  const loaderData = Route.useLoaderData();
-
-  const activeAudience = loaderData.audience;
-  const { data } = useSuspenseQuery(homeQueryOptions(activeAudience));
-
-  return (
-    <div style={{ display: "grid", gap: "1.5rem" }}>
+  routes/
+    __root.tsx
+    index.tsx
+    index.lazy.tsx
+    index.module.css
+    about/
+      route.tsx
+      route.lazy.tsx
       ...
-    </div>
-  );
-}
 ```
 
-## Search Params の管理
+- ルート直下では `index.tsx` / `index.lazy.tsx` をペアにし、UI を遅延読み込みする。
+- 機能単位で `components/`・`api/`・`models/` などに分割し、ルートファイルには TanStack Router API だけを記述する。
 
-- Home ルートでは `audience`、About ルートでは `focus` などの search params を使用して、URL から状態を管理する
-- `loaderDeps` を使って依存関係を定義し、SWR のような動作を実現する
+## ルート実装パターン
 
-## React Query の統合
-
-- `router.ts` で QueryClient を Router context に設定し、`ensureQueryData` で preload と `useSuspenseQuery` を使用してデータ取得を行う
-- これにより、Suspense + ErrorBoundary を使用した非同期処理が可能になる
-
-```5:22:apps/frontend/src/router.ts
-export const queryClient = new QueryClient();
-
-export const router = createRouter({
-  routeTree,
-  context: {
-    queryClient
-  },
-  defaultPreload: "intent"
-});
+```1:8:apps/frontend/src/routes/index.tsx
+export const Route = createFileRoute("/")({}).lazy(() =>
+  import("./index.lazy").then((module) => ({
+    component: module.RouteComponent,
+  })),
+);
 ```
 
-## Devtools
+- `.lazy()` を使うことで UI 実装を分離し、ルートファイルをルーティングの宣言に集中させる。
+- 遅延読み込み時に `pendingComponent` / `errorComponent` を返すこともでき、ルート固有のフォールバック UI を設定できる。
+- Search Params や Loader が不要なルートは、上記のように最小構成の設定で十分。
 
-- `__root.tsx` で `TanStackRouterDevtools` を追加し、`import.meta.env.PROD` で本番環境では無効化する
-- React Query Devtools も同様に `App.tsx` で追加する
+## Search Params 設計
 
-## TODO リスト
+- `validateSearch` 内で `zod` やカスタム関数を使い、URL から受け取るすべての値を正規化する。
+- `Route.updateSearch` や `useNavigate({ search, from })` を活用し、副作用なく URL 状態を書き換える。
+- 同じ Search Params を複数ルートで再利用する場合は、型・ユーティリティを `routes/_shared/search.ts` のような場所にまとめる。
 
-- pages ディレクトリから routes ディレクトリへの移行作業を完了する
-- loader / validateSearch / Suspense の実装を確認する
-- TanStack Query と Search Params を連携させた実装例を追加する
+## React Query との統合
+
+- ルート `loader` では Query Key を返す関数 (`mapboxQueryOptions` など) を呼び出し、`ensureQueryData` で Suspense 用にデータを温める。
+- コンポーネント側は `useSuspenseQuery` を使い、`loader` と同じ Query Key を再利用することでキャッシュヒット率を最大化する。
+- `defaultPreload: "intent"` を有効にすると、ユーザーがリンクへフォーカス / ホバーした時点で `loader` が走り、体感速度が向上する。
+
+## Devtools と観測性
+
+- `__root.tsx` で `TanStackRouterDevtools` を読み込み、`!import.meta.env.PROD` の条件で出し分ける。
+- React Query Devtools は `App.tsx` で同様に条件付き表示する。
+- ルーティング関連のログは `router.subscribe` でフックできるため、計測が必要になった場合は専用モジュールに切り出す。
+
+## 運用チェックリスト
+
+- [ ] 新規ルートを追加したら `bun vite tanstack-router generate` を必ず実行する
+- [ ] Search Params に破壊的変更を入れる際はマイグレーションパスを設計する
+- [ ] `loader` / `action` は副作用を含めず、外部 API 呼び出しは専用クライアントに委譲する
+- [ ] Devtools の表示条件や defaultPreload 設定を本番リリース前に再確認する
 
 ## 参考資料
 
 - [TanStack Router for React](https://tanstack.com/router/latest/docs/framework/react/overview)
+- [TanStack Router Route APIs](https://tanstack.com/router/latest/docs/framework/react/route-api)
 - [TanStack Query Documentation](https://tanstack.com/query/latest)
 - [TanStack Router & Queryを使ったSPA開発のベストプラクティス](https://zenn.dev/aishift/articles/ad1744836509dd)
