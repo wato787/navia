@@ -24,9 +24,9 @@
   },
   // Biomeの有効化
   "biome.enabled": true,
-  // 保存時に自動的にインポートを整理
+  // 保存時に自動的にインポートを整理と未使用importを削除
   "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit",
-    "source.fixAll.biome": "explicit"
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   }
 }
