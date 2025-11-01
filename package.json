@@ -7,7 +7,6 @@
     "apps/backend"
   ],
   "scripts": {
-    "install": "mise run install",
     "dev": "mise run dev",
     "build": "mise run build"
   },
