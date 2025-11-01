@@ -22,7 +22,7 @@ run = "bunx biome lint"
 
 [tasks."lint:fix"]
 description = "Apply safe Biome lint fixes"
-run = "bunx biome lint --apply"
+run = "bunx biome lint --write"
 
 [tasks.format]
 description = "Format code with Biome"

@@ -10,7 +10,7 @@ bun add --cwd apps/frontend \
   @tanstack/react-query @tanstack/router-plugin
 ```
 
-- `vite.config.ts` に `TanStackRouterVite({ target: "react", autoCodeSplitting: true })` を追加して、ルート生成を有効化する
+- `vite.config.ts` に `tanstackRouter({ routesDirectory: "./src/routes" })` を追加して、ルート生成を有効化する
 - **注意**: `@tanstack/router-vite-plugin` は非推奨です。代わりに `@tanstack/router-plugin` を使用してください
 - QueryClient を `router.ts` で設定し、Router と Context を通じて React Query Provider として使用する
 
