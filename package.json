@@ -1,0 +1,19 @@
+{
+  "name": "bun-mise-monorepo",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend"
+  ],
+  "scripts": {
+    "install": "mise run install",
+    "dev": "mise run dev-frontend",
+    "dev:frontend": "mise run dev-frontend",
+    "dev:backend": "mise run dev-backend",
+    "build": "mise run build"
+  },
+  "engines": {
+    "bun": ">=1.1.0"
+  }
+}

@@ -1,0 +1,33 @@
+[tools]
+bun = "latest"
+
+[tasks.install]
+description = "Install workspace dependencies"
+run = "bun install"
+
+[tasks.dev-frontend]
+description = "Start the frontend dev server"
+dir = "apps/frontend"
+run = "bun run dev"
+
+[tasks.dev-backend]
+description = "Start the backend API server"
+dir = "apps/backend"
+run = "bun run dev"
+
+[tasks.build-frontend]
+description = "Build the frontend app"
+dir = "apps/frontend"
+run = "bun run build"
+
+[tasks.build-backend]
+description = "Build the backend server"
+dir = "apps/backend"
+run = "bun run build"
+
+[tasks.build]
+description = "Build frontend and backend"
+run = [
+  "mise run build-frontend",
+  "mise run build-backend"
+]
