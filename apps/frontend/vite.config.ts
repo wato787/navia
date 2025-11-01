@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
-  plugins: [react(), TanStackRouterVite({ routesDirectory: "./src/routes" })],
+  plugins: [react(), tanstackRouter({ routesDirectory: "./src/routes" })],
   server: {
-    port: 5173
-  }
+    port: 5173,
+  },
 });
