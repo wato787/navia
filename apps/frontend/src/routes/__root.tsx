@@ -1,41 +1,10 @@
-import {
-  Link,
-  Outlet,
-  RootRoute,
-  Route,
-  createRouter
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import AboutPage from "./pages/AboutPage";
-import HomePage from "./pages/HomePage";
+import type { RouterContext } from "../router";
 
-const rootRoute = new RootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout
 });
-
-const indexRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/",
-  component: HomePage
-});
-
-const aboutRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "about",
-  component: AboutPage
-});
-
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
-
-export const router = createRouter({
-  routeTree
-});
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
 
 function RootLayout() {
   return (
@@ -98,5 +67,3 @@ function RootLayout() {
     </div>
   );
 }
-
-export type AppRouter = typeof router;
