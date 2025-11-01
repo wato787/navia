@@ -24,29 +24,27 @@
       "recommended": true
     }
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "javascript": {
+    "globals": []
+  },
   "overrides": [
     {
-      "includes": [
-        "apps/frontend/**/*.{ts,tsx,js,jsx}"
-      ],
+      "includes": ["apps/frontend/**/*.{ts,tsx,js,jsx}"],
       "javascript": {
-        "globals": [
-          "window",
-          "document",
-          "navigator"
-        ]
+        "globals": ["window", "document", "navigator"]
       }
     },
     {
-      "includes": [
-        "apps/backend/**/*.ts"
-      ],
+      "includes": ["apps/backend/**/*.ts"],
       "javascript": {
-        "globals": [
-          "Bun",
-          "Response",
-          "Request"
-        ]
+        "globals": ["Bun", "Response", "Request"]
       }
     }
   ]

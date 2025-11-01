@@ -23,6 +23,10 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   // Biomeの有効化
-  "biome.enabled": true
+  "biome.enabled": true,
+  // 保存時に自動的にインポートを整理
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit"
+  }
 }
 
