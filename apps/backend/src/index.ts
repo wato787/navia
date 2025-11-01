@@ -10,7 +10,7 @@ const port = Number(process.env.PORT ?? 8787);
 
 serve({
   port,
-  fetch: app.fetch
+  fetch: app.fetch,
 });
 
 console.log(`Hono server ready on http://localhost:${port}`);
