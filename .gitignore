@@ -1,6 +1,9 @@
-# Node/Bun dependencies
+# Dependency directories / lockfiles
 node_modules/
 bun.lockb
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
 # Build outputs
 dist/
@@ -8,6 +11,10 @@ build/
 **/dist/
 **/build/
 *.tsbuildinfo
+
+# Transpiled config artifacts
+**/vite.config.js
+**/vite.config.d.ts
 
 # Logs
 *.log
