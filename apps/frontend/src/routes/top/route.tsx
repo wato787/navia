@@ -1,12 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./top.module.css";
+import { Route as RootRoute } from "../__root";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 
-export const Route = createFileRoute("/" as never)({
+export const Route = createRoute({
+  getParentRoute: () => RootRoute,
+  path: "/",
   component: TopPage
 });
 
