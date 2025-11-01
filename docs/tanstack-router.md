@@ -46,26 +46,17 @@ apps/frontend/src/
 
 ## ルート実装パターン
 
-```15:42:apps/frontend/src/routes/index.tsx
-export const Route = createFileRoute("/")({
-  validateSearch: resolveSearchParams,
-  loaderDeps: ({ search }) => ({ ...search }),
-  loader: async ({ context, deps }) => {
-    await context.queryClient.ensureQueryData(mapViewQueryOptions(deps));
-    return deps;
-  },
-}).lazy(() =>
+```1:8:apps/frontend/src/routes/index.tsx
+export const Route = createFileRoute("/")({}).lazy(() =>
   import("./index.lazy").then((module) => ({
     component: module.RouteComponent,
-    pendingComponent: module.PendingState,
-    errorComponent: module.ErrorState,
   })),
 );
 ```
 
-- `.lazy()` から `component`・`pendingComponent`・`errorComponent` を返し、ルートファイルを「設定」に集中させる。
-- `loaderDeps` を Search Params に合わせて宣言し、`ensureQueryData` の Query Key と同期させる。
-- ルート配下のコンポーネントでは `Route.useLoaderData()` / `useSuspenseQuery(mapViewQueryOptions(...))` を組み合わせて URL 状態とキャッシュを一元化する。
+- `.lazy()` を使うことで UI 実装を分離し、ルートファイルをルーティングの宣言に集中させる。
+- 遅延読み込み時に `pendingComponent` / `errorComponent` を返すこともでき、ルート固有のフォールバック UI を設定できる。
+- Search Params や Loader が不要なルートは、上記のように最小構成の設定で十分。
 
 ## Search Params 設計
 
