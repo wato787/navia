@@ -1,0 +1,17 @@
+[tools]
+bun = ">=1.1.0"
+
+[tasks.install]
+description = "Install workspace dependencies"
+run = "bun install"
+
+[tasks.dev]
+description = "Start both frontend and backend dev servers"
+run = "bun run --cwd apps/backend dev & bun run --cwd apps/frontend dev"
+
+[tasks.build]
+description = "Build frontend and backend"
+run = [
+  "bun run --cwd apps/frontend build",
+  "bun run --cwd apps/backend build"
+]
