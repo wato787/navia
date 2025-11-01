@@ -26,6 +26,7 @@
   "biome.enabled": true,
   // 保存時に自動的にインポートを整理
   "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
     "source.fixAll.biome": "explicit"
   }
 }
