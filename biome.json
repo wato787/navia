@@ -50,6 +50,16 @@
       "javascript": {
         "globals": ["Bun", "Response", "Request"]
       }
+    },
+    {
+      "includes": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnknownAtRule": "off"
+          }
+        }
+      }
     }
   ]
 }
