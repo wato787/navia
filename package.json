@@ -8,9 +8,7 @@
   ],
   "scripts": {
     "install": "mise run install",
-    "dev": "mise run dev-frontend",
-    "dev:frontend": "mise run dev-frontend",
-    "dev:backend": "mise run dev-backend",
+    "dev": "mise run dev",
     "build": "mise run build"
   },
   "engines": {
