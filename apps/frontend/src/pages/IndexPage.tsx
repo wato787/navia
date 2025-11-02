@@ -8,13 +8,13 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { SearchRoute } from "@/components/SearchRoute";
 import type { MapRef } from "react-map-gl/mapbox";
 import {
-  MAPBOX_TOKEN,
   INITIAL_VIEW_STATE,
   MAP_STYLE,
   MAPBOX_MAP_STYLE,
   NAVIGATION_CONTROL_PROPS,
   GEOLOCATE_CONTROL_PROPS,
 } from "./const";
+import { MAPBOX_TOKEN } from "@/config/env";
 import { useCurrentLocation } from "./useCurrentLocation";
 import { useRouteSearch } from "./useRouteSearch";
 

@@ -1,8 +1,5 @@
 // IndexPage用のMapbox設定
 
-// Mapbox / Google設定
-export { MAPBOX_TOKEN, GOOGLE_MAPS_API_KEY } from "@/config/env";
-
 // 初期ビュー状態（東京駅付近）
 export const INITIAL_VIEW_STATE = {
   longitude: 139.767125,
