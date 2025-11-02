@@ -1,3 +1,5 @@
+import { GOOGLE_MAPS_API_KEY } from "@/config/env";
+
 export interface GooglePlaceAutocompletePrediction {
   description: string;
   place_id: string;
@@ -73,12 +75,15 @@ function assertSuccess(
 
 export async function getPlacesAutocomplete(
   input: string,
-  apiKey: string,
   opts?: AutocompleteOptions,
 ): Promise<GooglePlaceAutocompletePrediction[]> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    throw new Error("Google Maps API key is not configured");
+  }
+
   const params = new URLSearchParams({
     input,
-    key: apiKey,
+    key: GOOGLE_MAPS_API_KEY,
     language: "ja",
     types: "geocode|establishment",
   });
@@ -108,12 +113,15 @@ export async function getPlacesAutocomplete(
 
 export async function getPlaceDetails(
   placeId: string,
-  apiKey: string,
   sessionToken?: string,
 ): Promise<GooglePlaceLocation | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    throw new Error("Google Maps API key is not configured");
+  }
+
   const params = new URLSearchParams({
     place_id: placeId,
-    key: apiKey,
+    key: GOOGLE_MAPS_API_KEY,
     language: "ja",
     fields: "geometry/location",
   });
@@ -140,11 +148,14 @@ export async function getPlaceDetails(
 
 export async function geocodeAddressWithGoogle(
   address: string,
-  apiKey: string,
 ): Promise<GooglePlaceLocation | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    throw new Error("Google Maps API key is not configured");
+  }
+
   const params = new URLSearchParams({
     address,
-    key: apiKey,
+    key: GOOGLE_MAPS_API_KEY,
     language: "ja",
     region: "jp",
   });

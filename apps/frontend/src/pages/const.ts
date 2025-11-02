@@ -1,10 +1,7 @@
 // IndexPage用のMapbox設定
 
-// Mapbox設定
-export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
-
-// Google設定
-export const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
+// Mapbox / Google設定
+export { MAPBOX_TOKEN, GOOGLE_MAPS_API_KEY } from "@/config/env";
 
 // 初期ビュー状態（東京駅付近）
 export const INITIAL_VIEW_STATE = {

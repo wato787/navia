@@ -1,10 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import {
-  MAPBOX_TOKEN,
-  INITIAL_VIEW_STATE,
-  GOOGLE_MAPS_API_KEY,
-} from "./const";
+import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
 import type { Location } from "@/types/location";
@@ -34,18 +30,11 @@ export function useRouteSearch(
         throw new Error("Mapbox token is not configured");
       }
 
-      if (!GOOGLE_MAPS_API_KEY) {
-        throw new Error("Google Maps API key is not configured");
-      }
-
       // 目的地を座標に変換
       let destinationCoords: Location | null = null;
 
       if (destination.placeId) {
-        const place = await getPlaceDetails(
-          destination.placeId,
-          GOOGLE_MAPS_API_KEY,
-        );
+        const place = await getPlaceDetails(destination.placeId);
 
         if (place) {
           destinationCoords = { lat: place.lat, lng: place.lng };
@@ -55,7 +44,6 @@ export function useRouteSearch(
       if (!destinationCoords && destination.description.trim().length > 0) {
         const geocoded = await geocodeAddressWithGoogle(
           destination.description,
-          GOOGLE_MAPS_API_KEY,
         );
 
         if (geocoded) {

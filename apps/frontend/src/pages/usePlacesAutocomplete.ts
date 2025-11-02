@@ -4,7 +4,7 @@ import {
   type GooglePlaceAutocompletePrediction,
 } from "@/api/googlePlaces";
 import { useDebounce } from "@/hooks/useDebounce";
-import { GOOGLE_MAPS_API_KEY } from "./const";
+import { GOOGLE_MAPS_API_KEY } from "@/config/env";
 import type { Location } from "@/types/location";
 
 type UsePlacesAutocompleteOptions = {
@@ -36,7 +36,7 @@ export function usePlacesAutocomplete(
         throw new Error("Google Maps API key is not configured");
       }
 
-      return await getPlacesAutocomplete(debouncedQuery, GOOGLE_MAPS_API_KEY, {
+      return await getPlacesAutocomplete(debouncedQuery, {
         location: proximityParam,
         radius: options?.radius,
       });
