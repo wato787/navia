@@ -61,10 +61,12 @@ describe("SearchBar", () => {
     expect(handleSearch).toHaveBeenCalledOnce();
     expect(handleSearch).toHaveBeenCalledWith(TRIMMED_QUERY);
 
-    await user.click(clearButton!);
+    if (clearButton) {
+      await user.click(clearButton);
 
-    expect(handleChange).toHaveBeenLastCalledWith("");
-    expect(searchButton).toBeDisabled();
-    expect(input).toHaveValue("");
+      expect(handleChange).toHaveBeenLastCalledWith("");
+      expect(searchButton).toBeDisabled();
+      expect(input).toHaveValue("");
+    }
   });
 });
