@@ -8,7 +8,8 @@
       "!**/build",
       "!**/.vite",
       "!**/.output",
-      "!**/.turbo"
+      "!**/.turbo",
+      "!**/routeTree.gen.ts"
     ],
     "ignoreUnknown": true
   },
