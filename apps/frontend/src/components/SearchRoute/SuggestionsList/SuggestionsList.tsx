@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
-import { Location } from "@/types/location";
+import type { Location } from "@/types/location";
 
 type SuggestionsListProps = {
   query: string;
@@ -42,6 +42,11 @@ export function SuggestionsList({
             <li
               key={suggestion.id}
               onClick={() => onSuggestionClick(suggestion)}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") {
+                  onSuggestionClick(suggestion);
+                }
+              }}
               className="px-4 py-3 cursor-pointer transition-colors hover:bg-blue-50"
             >
               <div className="font-medium text-gray-900">{suggestion.text}</div>

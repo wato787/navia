@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useEffectEvent } from "react";
+import { useState, useCallback } from "react";
 
 /**
  * 現在地を管理するフック

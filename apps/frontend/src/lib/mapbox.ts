@@ -1,4 +1,4 @@
-import { Location } from "@/types/location";
+import type { Location } from "@/types/location";
 
 /**
  * Mapbox API関連のユーティリティ関数

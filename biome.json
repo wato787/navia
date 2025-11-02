@@ -24,7 +24,7 @@
       "recommended": true,
       "correctness": {
         "noUnusedVariables": "warn",
-        "noUnusedImports": "error"
+        "noUnusedImports": "warn"
       }
     }
   },

@@ -3,7 +3,7 @@ import type { MapRef } from "react-map-gl/mapbox";
 import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { geocodeAddress, getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
-import { Location } from "@/types/location";
+import type { Location } from "@/types/location";
 
 type RouteSearchParams = {
   destination: string;
