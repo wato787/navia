@@ -1,3 +1,5 @@
+import { ENV } from "../config/env";
+
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 const LEVELS: Record<LogLevel, number> = {
@@ -7,7 +9,7 @@ const LEVELS: Record<LogLevel, number> = {
   error: 40,
 };
 
-const CURRENT_LEVEL: LogLevel = (Bun.env.LOG_LEVEL as LogLevel) ?? "info";
+const CURRENT_LEVEL: LogLevel = ENV.LOG_LEVEL;
 
 const shouldLog = (level: LogLevel) => LEVELS[level] >= LEVELS[CURRENT_LEVEL];
 

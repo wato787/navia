@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 
-export const healthRouter = new Hono();
+import type { AppBindings } from "../types/app";
 
-healthRouter.get("/", (c) =>
+export const healthRouter = new Hono<AppBindings>();
+
+healthRouter.get("/live", (c) =>
   c.json({
     status: "ok",
     uptime: process.uptime(),
@@ -10,4 +12,8 @@ healthRouter.get("/", (c) =>
   }),
 );
 
-healthRouter.get("/readiness", (c) => c.text("ready"));
+healthRouter.get("/ready", (c) =>
+  c.json({
+    status: "ready",
+  }),
+);
