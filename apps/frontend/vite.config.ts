@@ -22,7 +22,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: "jsdom",
+    environment: "happy-dom",
     setupFiles: path.resolve(__dirname, "./src/test/setup.ts"),
     css: true,
   },
