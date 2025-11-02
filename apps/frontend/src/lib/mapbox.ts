@@ -68,7 +68,7 @@ export async function geocodeAutocomplete(
   query: string,
   accessToken: string,
   options?: {
-    proximity?: [number, number];
+    proximity?: Location;
     limit?: number;
   },
 ): Promise<MapboxGeocodeFeature[] | null> {
@@ -77,13 +77,15 @@ export async function geocodeAutocomplete(
       access_token: accessToken,
       autocomplete: "true",
       language: "ja",
+      country: "jp",
+      types: "place,poi,locality,neighborhood,address",
       limit: String(options?.limit ?? 5),
     });
 
     if (options?.proximity) {
       params.append(
         "proximity",
-        `${options.proximity[0]},${options.proximity[1]}`,
+        `${options.proximity.lng},${options.proximity.lat}`,
       );
     }
 

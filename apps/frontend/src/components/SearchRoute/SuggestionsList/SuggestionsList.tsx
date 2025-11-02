@@ -16,7 +16,7 @@ export function SuggestionsList({
 }: SuggestionsListProps) {
   const { data: suggestions, isLoading } = useGeocodeAutocomplete(query, {
     proximity: currentLocation
-      ? [currentLocation.lng, currentLocation.lat]
+      ? currentLocation
       : undefined,
     limit: 5,
   });

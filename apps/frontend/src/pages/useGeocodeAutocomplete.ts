@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MAPBOX_TOKEN } from "./const";
 import { geocodeAutocomplete, type MapboxGeocodeFeature } from "@/lib/mapbox";
 import { useDebounce } from "@/hooks/useDebounce";
+import type { Location } from "@/types/location";
 
 /**
  * Debounce付きのGeocoding Autocompleteフック
@@ -9,7 +10,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 export function useGeocodeAutocomplete(
   query: string,
   options?: {
-    proximity?: [number, number];
+    proximity?: Location;
     limit?: number;
   },
 ) {
