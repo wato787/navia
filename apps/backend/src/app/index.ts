@@ -5,10 +5,10 @@ import { requestId } from "hono/request-id";
 import { trimTrailingSlash } from "hono/trailing-slash";
 
 import { ENV, isProduction } from "../config/env";
+import { logger } from "../lib/logger";
 import { requestLogger } from "../middleware/requestLogger";
 import { registerRoutes } from "../routes";
 import type { AppBindings } from "../types/app";
-import { logger } from "../lib/logger";
 
 export const createApp = () => {
   const app = new Hono<AppBindings>();

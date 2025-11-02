@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { geocodeAddress, getRoute } from "@/lib/mapbox";
-import { useRouteDisplay } from "./useRouteDisplay";
 import type { Location } from "@/types/location";
+import { INITIAL_VIEW_STATE, MAPBOX_TOKEN } from "./const";
+import { useRouteDisplay } from "./useRouteDisplay";
 
 type RouteSearchParams = {
   destination: string;

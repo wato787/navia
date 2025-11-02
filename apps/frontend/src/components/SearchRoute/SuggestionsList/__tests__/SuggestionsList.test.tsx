@@ -1,10 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { SuggestionsList } from "..";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
 import type { ComponentProps } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { SuggestionsList } from "..";
 
 type UseGeocodeAutocomplete =
   typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;

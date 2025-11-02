@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { SearchRoute } from "..";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { SearchRoute } from "..";
 
 type UseGeocodeAutocomplete =
   typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;

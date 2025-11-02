@@ -5,15 +5,15 @@ import MapComponent, {
   ScaleControl,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { SearchRoute } from "@/components/SearchRoute";
 import type { MapRef } from "react-map-gl/mapbox";
+import { SearchRoute } from "@/components/SearchRoute";
 import {
-  MAPBOX_TOKEN,
+  GEOLOCATE_CONTROL_PROPS,
   INITIAL_VIEW_STATE,
   MAP_STYLE,
   MAPBOX_MAP_STYLE,
+  MAPBOX_TOKEN,
   NAVIGATION_CONTROL_PROPS,
-  GEOLOCATE_CONTROL_PROPS,
 } from "./const";
 import { useCurrentLocation } from "./useCurrentLocation";
 import { useRouteSearch } from "./useRouteSearch";

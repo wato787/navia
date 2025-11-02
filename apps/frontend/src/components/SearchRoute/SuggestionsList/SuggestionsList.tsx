@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
-import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { Location } from "@/types/location";
 
 type SuggestionsListProps = {
