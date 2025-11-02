@@ -2,14 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
 import { SuggestionsList } from "..";
 
 type UseGeocodeAutocomplete =
   typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
 
 type UseGeocodeAutocompleteReturn = {
-  data: MapboxGeocodeFeature[] | null;
+  data: GooglePlacesAutocompletePrediction[] | null;
   isLoading: boolean;
 };
 
@@ -25,20 +25,15 @@ vi.mock("@/pages/useGeocodeAutocomplete", () => ({
 }));
 
 const createSuggestion = (
-  overrides: Partial<MapboxGeocodeFeature> = {},
-): MapboxGeocodeFeature => ({
-  id: "suggestion-1",
-  type: "Feature",
-  place_type: ["place"],
-  relevance: 1,
-  properties: {},
-  text: "Default Text",
-  place_name: "Default Place",
-  center: [139.6917, 35.6895],
-  geometry: {
-    type: "Point",
-    coordinates: [139.6917, 35.6895],
+  overrides: Partial<GooglePlacesAutocompletePrediction> = {},
+): GooglePlacesAutocompletePrediction => ({
+  placeId: "suggestion-1",
+  description: "Default Place",
+  structuredFormatting: {
+    mainText: "Default Text",
+    secondaryText: "Default Place",
   },
+  types: ["establishment"],
   ...overrides,
 });
 
@@ -97,9 +92,11 @@ describe("SuggestionsList", () => {
 
   it("候補をクリックするとonSuggestionClickが呼ばれる", async () => {
     const suggestion = createSuggestion({
-      id: "suggestion-2",
-      text: "Tokyo",
-      place_name: "Tokyo, Japan",
+      placeId: "suggestion-2",
+      structuredFormatting: {
+        mainText: "Tokyo",
+        secondaryText: "Japan",
+      },
     });
 
     mockUseGeocodeAutocomplete.mockReturnValue({
@@ -130,9 +127,11 @@ describe("SuggestionsList", () => {
 
   it("Enterキーで候補を選択できる", async () => {
     const suggestion = createSuggestion({
-      id: "suggestion-3",
-      text: "Shinjuku",
-      place_name: "Shinjuku, Tokyo",
+      placeId: "suggestion-3",
+      structuredFormatting: {
+        mainText: "Shinjuku",
+        secondaryText: "Tokyo",
+      },
     });
 
     mockUseGeocodeAutocomplete.mockReturnValue({
