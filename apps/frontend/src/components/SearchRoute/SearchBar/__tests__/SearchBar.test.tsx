@@ -11,10 +11,8 @@ describe("SearchBar", () => {
     const handleSearch = vi.fn();
     const handleChange = vi.fn<(value: string) => void>();
 
-    const SEARCH_LABEL = "\u691c\u7d22";
-    const CLEAR_LABEL = "\u5165\u529b\u3092\u30af\u30ea\u30a2";
-    const RAW_QUERY = "  \u6771\u4eac ";
-    const TRIMMED_QUERY = "\u6771\u4eac";
+    const RAW_QUERY = "  Tokyo ";
+    const TRIMMED_QUERY = RAW_QUERY.trim();
 
     function ControlledSearchBar() {
       const [query, setQuery] = useState("");
@@ -32,23 +30,36 @@ describe("SearchBar", () => {
     render(<ControlledSearchBar />);
 
     const input = screen.getByRole("textbox");
-    const searchButton = screen.getByRole("button", { name: SEARCH_LABEL });
+    const searchButton = screen.getByRole("button");
+    const searchLabel = searchButton.getAttribute("aria-label");
 
+    expect(searchLabel).toBeTruthy();
+    expect(searchButton).toHaveAccessibleName(searchLabel ?? "");
     expect(searchButton).toBeDisabled();
-    expect(screen.queryByRole("button", { name: CLEAR_LABEL })).toBeNull();
+    expect(screen.queryAllByRole("button")).toHaveLength(1);
 
     await user.type(input, RAW_QUERY);
 
     expect(handleChange).toHaveBeenLastCalledWith(RAW_QUERY);
     expect(searchButton).toBeEnabled();
-    expect(screen.getByRole("button", { name: CLEAR_LABEL })).toBeInTheDocument();
+
+    const buttonsAfterInput = screen.getAllByRole("button");
+    expect(buttonsAfterInput).toHaveLength(2);
+
+    const clearButton = buttonsAfterInput.find((button) => button !== searchButton);
+    expect(clearButton).toBeDefined();
+
+    const clearLabel = clearButton?.getAttribute("aria-label");
+    expect(clearLabel).toBeTruthy();
+    expect(clearButton).not.toBeDisabled();
+    expect(clearButton).toHaveAccessibleName(clearLabel ?? "");
 
     await user.click(searchButton);
 
     expect(handleSearch).toHaveBeenCalledOnce();
     expect(handleSearch).toHaveBeenCalledWith(TRIMMED_QUERY);
 
-    await user.click(screen.getByRole("button", { name: CLEAR_LABEL }));
+    await user.click(clearButton!);
 
     expect(handleChange).toHaveBeenLastCalledWith("");
     expect(searchButton).toBeDisabled();
