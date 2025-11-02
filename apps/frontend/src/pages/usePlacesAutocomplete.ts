@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GOOGLE_MAPS_API_KEY } from "./const";
 import {
@@ -30,12 +30,16 @@ export function usePlacesAutocomplete(
   const debouncedQuery = useDebounce(query, debounceMs);
 
   const sessionTokenRef = useRef<string>(generateSessionToken());
+  const previousQueryRef = useRef<string>("");
 
-  useEffect(() => {
-    if (!debouncedQuery.trim()) {
-      sessionTokenRef.current = generateSessionToken();
-    }
-  }, [debouncedQuery]);
+  const trimmedQuery = debouncedQuery.trim();
+  const prevTrimmedQuery = previousQueryRef.current.trim();
+
+  if (trimmedQuery.length === 0 && prevTrimmedQuery.length > 0) {
+    sessionTokenRef.current = generateSessionToken();
+  }
+
+  previousQueryRef.current = debouncedQuery;
 
   const locationBias = useMemo(() => {
     if (!options?.proximity) {
@@ -50,7 +54,7 @@ export function usePlacesAutocomplete(
   const queryResult = useQuery<GooglePlaceAutocompleteSuggestion[]>({
     queryKey: [
       "places-autocomplete",
-      debouncedQuery,
+      trimmedQuery,
       locationBias?.location.lat,
       locationBias?.location.lng,
       locationBias?.radiusMeters,
@@ -62,13 +66,13 @@ export function usePlacesAutocomplete(
         throw new Error("Google Maps API key is not configured");
       }
 
-      return await placesAutocomplete(debouncedQuery, GOOGLE_MAPS_API_KEY, {
+      return await placesAutocomplete(trimmedQuery, GOOGLE_MAPS_API_KEY, {
         sessionToken: sessionTokenRef.current,
         locationBias,
         maxResultCount: options?.limit,
       });
     },
-    enabled: debouncedQuery.trim().length > 0 && Boolean(GOOGLE_MAPS_API_KEY),
+    enabled: trimmedQuery.length > 0 && Boolean(GOOGLE_MAPS_API_KEY),
     staleTime: 1000 * 60 * 5,
   });
 
