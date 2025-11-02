@@ -5,24 +5,27 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
 import { SuggestionsList } from "..";
 
-type UseGeocodeAutocomplete =
-  typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
+type UseSearchAutocomplete =
+  typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
 
-type UseGeocodeAutocompleteReturn = {
+type UseSearchAutocompleteReturn = {
   data: GooglePlacesAutocompletePrediction[] | null;
   isLoading: boolean;
 };
 
-const mockUseGeocodeAutocomplete = vi.hoisted(() => {
-  const fn = vi.fn() as unknown as UseGeocodeAutocomplete & {
-    mockReturnValue: (value: UseGeocodeAutocompleteReturn) => void;
+const mockUseSearchAutocomplete = vi.hoisted(() => {
+  const fn = vi.fn() as unknown as UseSearchAutocomplete & {
+    mockReturnValue: (value: UseSearchAutocompleteReturn) => void;
   };
   return fn;
 });
 
-vi.mock("@/pages/useGeocodeAutocomplete", () => ({
-  useGeocodeAutocomplete: mockUseGeocodeAutocomplete,
-}));
+vi.mock(
+  "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete",
+  () => ({
+    useSearchAutocomplete: mockUseSearchAutocomplete,
+  }),
+);
 
 const createSuggestion = (
   overrides: Partial<GooglePlacesAutocompletePrediction> = {},
@@ -54,7 +57,7 @@ describe("SuggestionsList", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseGeocodeAutocomplete.mockReturnValue({
+    mockUseSearchAutocomplete.mockReturnValue({
       data: null,
       isLoading: false,
     });
@@ -73,7 +76,7 @@ describe("SuggestionsList", () => {
 
     renderComponent({ query: "Tokyo", currentLocation: location });
 
-    expect(mockUseGeocodeAutocomplete).toHaveBeenCalledWith(
+    expect(mockUseSearchAutocomplete).toHaveBeenCalledWith(
       "Tokyo",
       expect.objectContaining({
         limit: 5,
@@ -83,7 +86,7 @@ describe("SuggestionsList", () => {
   });
 
   it("ローディング中は「検索中...」が表示される", () => {
-    mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: true });
+    mockUseSearchAutocomplete.mockReturnValue({ data: null, isLoading: true });
 
     renderComponent({ query: "Tokyo" });
 
@@ -99,7 +102,7 @@ describe("SuggestionsList", () => {
       },
     });
 
-    mockUseGeocodeAutocomplete.mockReturnValue({
+    mockUseSearchAutocomplete.mockReturnValue({
       data: [suggestion],
       isLoading: false,
     });
@@ -114,7 +117,7 @@ describe("SuggestionsList", () => {
   });
 
   it("候補がない場合は「候補が見つかりませんでした」が表示される", () => {
-    mockUseGeocodeAutocomplete.mockReturnValue({ data: [], isLoading: false });
+    mockUseSearchAutocomplete.mockReturnValue({ data: [], isLoading: false });
 
     renderComponent({ query: "Tokyo" });
 
@@ -134,7 +137,7 @@ describe("SuggestionsList", () => {
       },
     });
 
-    mockUseGeocodeAutocomplete.mockReturnValue({
+    mockUseSearchAutocomplete.mockReturnValue({
       data: [suggestion],
       isLoading: false,
     });

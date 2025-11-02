@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
-import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { Location } from "@/types/location";
+import { useSearchAutocomplete } from "./useSearchAutocomplete";
 
 type SuggestionsListProps = {
   query: string;
@@ -14,7 +14,7 @@ export function SuggestionsList({
   currentLocation,
   onSuggestionClick,
 }: SuggestionsListProps) {
-  const { data: suggestions, isLoading } = useGeocodeAutocomplete(query, {
+  const { data: suggestions, isLoading } = useSearchAutocomplete(query, {
     proximity: currentLocation ? currentLocation : undefined,
     limit: 5,
   });

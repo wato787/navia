@@ -5,12 +5,11 @@ import {
   googlePlacesAutocomplete,
 } from "@/lib/google-places";
 import type { Location } from "@/types/location";
-import { GOOGLE_PLACES_API_KEY } from "./const";
 
 /**
  * Debounce付きのGoogle Places Autocompleteフック
  */
-export function useGeocodeAutocomplete(
+export function useSearchAutocomplete(
   query: string,
   options?: {
     proximity?: Location;
@@ -20,26 +19,19 @@ export function useGeocodeAutocomplete(
   const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
-  const useGeocodeAutocompleteQuery = useQuery<
+  const useSearchAutocompleteQuery = useQuery<
     GooglePlacesAutocompletePrediction[] | null
   >({
     queryKey: ["geocode-autocomplete", debouncedQuery, options?.proximity],
     queryFn: async () => {
-      if (!GOOGLE_PLACES_API_KEY) {
-        throw new Error("Google Places API key is not configured");
-      }
-      return await googlePlacesAutocomplete(
-        debouncedQuery,
-        GOOGLE_PLACES_API_KEY,
-        {
-          proximity: options?.proximity,
-          limit: options?.limit,
-        },
-      );
+      return await googlePlacesAutocomplete(debouncedQuery, {
+        proximity: options?.proximity,
+        limit: options?.limit,
+      });
     },
-    enabled: debouncedQuery.trim().length > 0 && !!GOOGLE_PLACES_API_KEY,
+    enabled: debouncedQuery.trim().length > 0,
     staleTime: 1000 * 60 * 5, // 5分間キャッシュ
   });
 
-  return useGeocodeAutocompleteQuery;
+  return useSearchAutocompleteQuery;
 }

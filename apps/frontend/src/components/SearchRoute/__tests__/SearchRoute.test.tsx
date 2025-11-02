@@ -4,24 +4,27 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
 import { SearchRoute } from "..";
 
-type UseGeocodeAutocomplete =
-  typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
+type UseSearchAutocomplete =
+  typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
 
-type UseGeocodeAutocompleteReturn = {
+type UseSearchAutocompleteReturn = {
   data: GooglePlacesAutocompletePrediction[] | null;
   isLoading: boolean;
 };
 
-const mockUseGeocodeAutocomplete = vi.hoisted(() => {
-  const fn = vi.fn() as unknown as UseGeocodeAutocomplete & {
-    mockReturnValue: (value: UseGeocodeAutocompleteReturn) => void;
+const mockUseSearchAutocomplete = vi.hoisted(() => {
+  const fn = vi.fn() as unknown as UseSearchAutocomplete & {
+    mockReturnValue: (value: UseSearchAutocompleteReturn) => void;
   };
   return fn;
 });
 
-vi.mock("@/pages/useGeocodeAutocomplete", () => ({
-  useGeocodeAutocomplete: mockUseGeocodeAutocomplete,
-}));
+vi.mock(
+  "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete",
+  () => ({
+    useSearchAutocomplete: mockUseSearchAutocomplete,
+  }),
+);
 
 const createSuggestion = (
   overrides: Partial<GooglePlacesAutocompletePrediction> = {},
@@ -40,7 +43,7 @@ const createSuggestion = (
 describe("SearchRoute", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseGeocodeAutocomplete.mockReturnValue({ data: [], isLoading: false });
+    mockUseSearchAutocomplete.mockReturnValue({ data: [], isLoading: false });
   });
 
   it("空白文字を含むクエリで検索ボタンをクリックするとトリムされた値がonSearchに渡される", async () => {
@@ -59,7 +62,7 @@ describe("SearchRoute", () => {
     expect(handleSearch).toHaveBeenCalledWith("Tokyo");
 
     await waitFor(() => {
-      expect(mockUseGeocodeAutocomplete).toHaveBeenCalledWith(
+      expect(mockUseSearchAutocomplete).toHaveBeenCalledWith(
         "  Tokyo ",
         expect.objectContaining({ limit: 5 }),
       );
@@ -75,7 +78,7 @@ describe("SearchRoute", () => {
       },
     });
 
-    mockUseGeocodeAutocomplete.mockReturnValue({
+    mockUseSearchAutocomplete.mockReturnValue({
       data: [suggestion],
       isLoading: false,
     });

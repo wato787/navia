@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { geocodeAddress, getRoute } from "@/lib/mapbox";
+import { geocodeAddress, getRoute } from "@/lib/google-places";
 import type { Location } from "@/types/location";
-import { INITIAL_VIEW_STATE, MAPBOX_TOKEN } from "./const";
+import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
 
 type RouteSearchParams = {
@@ -21,12 +21,8 @@ export function useRouteSearch(
 
   const mutation = useMutation({
     mutationFn: async ({ destination }: RouteSearchParams) => {
-      if (!MAPBOX_TOKEN) {
-        throw new Error("Mapbox token is not configured");
-      }
-
       // 目的地を座標に変換
-      const destinationCoords = await geocodeAddress(destination, MAPBOX_TOKEN);
+      const destinationCoords = await geocodeAddress(destination);
       if (!destinationCoords) {
         throw new Error("目的地が見つかりませんでした");
       }
@@ -38,11 +34,7 @@ export function useRouteSearch(
       };
 
       // 経路を取得
-      const route = await getRoute(
-        startCoords,
-        destinationCoords as Location,
-        MAPBOX_TOKEN,
-      );
+      const route = await getRoute(startCoords, destinationCoords);
       if (!route) {
         throw new Error("経路を取得できませんでした");
       }

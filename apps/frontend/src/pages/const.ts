@@ -3,9 +3,9 @@
 // Mapbox設定
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 
-// Google Places API設定
-export const GOOGLE_PLACES_API_KEY =
-  import.meta.env.VITE_GOOGLE_PLACES_API_KEY ?? "";
+// Google Maps API設定（Places、Geocoding、Directions APIなどに使用）
+export const GOOGLE_MAPS_API_KEY =
+  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
 
 // 初期ビュー状態（東京駅付近）
 export const INITIAL_VIEW_STATE = {
