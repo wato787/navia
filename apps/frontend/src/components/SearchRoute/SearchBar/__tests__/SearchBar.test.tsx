@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { SearchBar } from "./SearchBar";
+import { SearchBar } from "../SearchBar";
 
 describe("SearchBar", () => {
   it("handles user typing, search execution, and clearing", async () => {
