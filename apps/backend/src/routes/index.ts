@@ -2,6 +2,7 @@ import { Hono } from "hono";
 
 import { ENV } from "../config/env";
 import health from "../modules/health";
+import places from "../modules/places";
 import type { AppBindings } from "../types/app";
 import { ok } from "../utils/response";
 
@@ -22,6 +23,7 @@ export const registerRoutes = (app: Hono<AppBindings>) => {
   // API routes
   const api = new Hono<AppBindings>();
   api.route("/health", health);
+  api.route("/places", places);
 
   app.route("/api", api);
 };

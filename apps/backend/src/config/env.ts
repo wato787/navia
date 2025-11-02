@@ -7,6 +7,7 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(8787),
   BASE_URL: z.string().url().optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  GOOGLE_MAPS_API_KEY: z.string().min(1, "Google Maps API key is required"),
 });
 
 const parsedEnv = EnvSchema.safeParse({
@@ -14,6 +15,7 @@ const parsedEnv = EnvSchema.safeParse({
   PORT: Bun.env.PORT,
   BASE_URL: Bun.env.BASE_URL,
   LOG_LEVEL: Bun.env.LOG_LEVEL,
+  GOOGLE_MAPS_API_KEY: Bun.env.GOOGLE_MAPS_API_KEY,
 });
 
 if (!parsedEnv.success) {
