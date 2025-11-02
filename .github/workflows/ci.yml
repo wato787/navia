@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend CI
+    uses: ./.github/workflows/frontend.yml
