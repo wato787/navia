@@ -5,10 +5,10 @@ import { requestId } from "hono/request-id";
 import { trimTrailingSlash } from "hono/trailing-slash";
 
 import { ENV, isProduction } from "../config/env";
-import { logger } from "../lib/logger";
 import { requestLogger } from "../middleware/requestLogger";
 import { registerRoutes } from "../routes";
 import type { AppBindings } from "../types/app";
+import { handleError } from "../errors/handleError";
 
 export const createApp = () => {
   const app = new Hono<AppBindings>();
@@ -44,20 +44,7 @@ export const createApp = () => {
     ),
   );
 
-  app.onError((err, c) => {
-    logger.error("app.error", {
-      message: err.message,
-      stack: err.stack,
-    });
-    return c.json(
-      {
-        error: {
-          message: "Internal Server Error",
-        },
-      },
-      500,
-    );
-  });
+  app.onError(handleError);
 
   return app;
 };
