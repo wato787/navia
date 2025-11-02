@@ -9,7 +9,9 @@ export const validateJson = <TSchema extends z.ZodTypeAny>(schema: TSchema) =>
     c.req.valid("json");
   });
 
-export const validateQuery = <TSchema extends z.ZodRawShape>(schema: z.ZodObject<TSchema>) =>
+export const validateQuery = <TSchema extends z.ZodRawShape>(
+  schema: z.ZodObject<TSchema>,
+) =>
   zValidator("query", schema, (result, c) => {
     if (!result.success) {
       throw result.error;
@@ -17,7 +19,9 @@ export const validateQuery = <TSchema extends z.ZodRawShape>(schema: z.ZodObject
     c.req.valid("query");
   });
 
-export const validateParams = <TSchema extends z.ZodRawShape>(schema: z.ZodObject<TSchema>) =>
+export const validateParams = <TSchema extends z.ZodRawShape>(
+  schema: z.ZodObject<TSchema>,
+) =>
   zValidator("param", schema, (result, c) => {
     if (!result.success) {
       throw result.error;

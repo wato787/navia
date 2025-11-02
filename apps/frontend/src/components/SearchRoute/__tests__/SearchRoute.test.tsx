@@ -5,31 +5,36 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SearchRoute } from "..";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
 
-type UseGeocodeAutocomplete = typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
+type UseGeocodeAutocomplete =
+  typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
 
 const mockUseGeocodeAutocomplete = vi.hoisted(() =>
-  vi.fn<ReturnType<UseGeocodeAutocomplete>, Parameters<UseGeocodeAutocomplete>>(),
+  vi.fn<
+    ReturnType<UseGeocodeAutocomplete>,
+    Parameters<UseGeocodeAutocomplete>
+  >(),
 );
 
 vi.mock("@/pages/useGeocodeAutocomplete", () => ({
   useGeocodeAutocomplete: mockUseGeocodeAutocomplete,
 }));
 
-const createSuggestion = (overrides: Partial<MapboxGeocodeFeature> = {}) => ({
-  id: "route-suggestion-1",
-  type: "Feature",
-  place_type: ["place"],
-  relevance: 1,
-  properties: {},
-  text: "Sample",
-  place_name: "Sample Place",
-  center: [139.6917, 35.6895],
-  geometry: {
-    type: "Point",
-    coordinates: [139.6917, 35.6895],
-  },
-  ...overrides,
-}) satisfies MapboxGeocodeFeature;
+const createSuggestion = (overrides: Partial<MapboxGeocodeFeature> = {}) =>
+  ({
+    id: "route-suggestion-1",
+    type: "Feature",
+    place_type: ["place"],
+    relevance: 1,
+    properties: {},
+    text: "Sample",
+    place_name: "Sample Place",
+    center: [139.6917, 35.6895],
+    geometry: {
+      type: "Point",
+      coordinates: [139.6917, 35.6895],
+    },
+    ...overrides,
+  }) satisfies MapboxGeocodeFeature;
 
 describe("SearchRoute", () => {
   beforeEach(() => {

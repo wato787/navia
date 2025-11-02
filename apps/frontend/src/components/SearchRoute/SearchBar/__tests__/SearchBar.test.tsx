@@ -46,7 +46,9 @@ describe("SearchBar", () => {
     const buttonsAfterInput = screen.getAllByRole("button");
     expect(buttonsAfterInput).toHaveLength(2);
 
-    const clearButton = buttonsAfterInput.find((button) => button !== searchButton);
+    const clearButton = buttonsAfterInput.find(
+      (button) => button !== searchButton,
+    );
     expect(clearButton).toBeDefined();
 
     const clearLabel = clearButton?.getAttribute("aria-label");

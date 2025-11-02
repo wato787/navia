@@ -8,7 +8,7 @@ import { ENV, isProduction } from "../config/env";
 import { requestLogger } from "../middleware/requestLogger";
 import { registerRoutes } from "../routes";
 import type { AppBindings } from "../types/app";
-import { handleError } from "../errors/handleError";
+import { logger } from "../lib/logger";
 
 export const createApp = () => {
   const app = new Hono<AppBindings>();
@@ -44,7 +44,20 @@ export const createApp = () => {
     ),
   );
 
-  app.onError(handleError);
+  app.onError((err, c) => {
+    logger.error("error", {
+      error: err,
+      requestId: c.get("requestId"),
+    });
+    return c.json(
+      {
+        error: {
+          message: "Internal server error",
+        },
+      },
+      500,
+    );
+  });
 
   return app;
 };

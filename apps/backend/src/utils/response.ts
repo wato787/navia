@@ -27,8 +27,10 @@ export const ok = <TData, TMeta = undefined>(
   return c.json(body, 200);
 };
 
-export const created = <TData>(c: Context<AppBindings>, data: TData) => c.json({ data }, 201);
+export const created = <TData>(c: Context<AppBindings>, data: TData) =>
+  c.json({ data }, 201);
 
-export const accepted = <TData>(c: Context<AppBindings>, data: TData) => c.json({ data }, 202);
+export const accepted = <TData>(c: Context<AppBindings>, data: TData) =>
+  c.json({ data }, 202);
 
 export const noContent = (c: Context<AppBindings>) => c.body(null, 204);

@@ -12,7 +12,8 @@ export const requestLogger = (): MiddlewareHandler<AppBindings> => {
     } finally {
       const durationMs = Math.round((performance.now() - start) * 100) / 100;
       const status = c.res?.status ?? 500;
-      const logLevel = status >= 500 ? "error" : status >= 400 ? "warn" : "info";
+      const logLevel =
+        status >= 500 ? "error" : status >= 400 ? "warn" : "info";
 
       logger[logLevel]("request.completed", {
         requestId: c.get("requestId"),

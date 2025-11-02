@@ -6,10 +6,14 @@ import { SuggestionsList } from "..";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
 import type { ComponentProps } from "react";
 
-type UseGeocodeAutocomplete = typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
+type UseGeocodeAutocomplete =
+  typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
 
 const mockUseGeocodeAutocomplete = vi.hoisted(() =>
-  vi.fn<ReturnType<UseGeocodeAutocomplete>, Parameters<UseGeocodeAutocomplete>>(),
+  vi.fn<
+    ReturnType<UseGeocodeAutocomplete>,
+    Parameters<UseGeocodeAutocomplete>
+  >(),
 );
 
 vi.mock("@/pages/useGeocodeAutocomplete", () => ({
@@ -51,7 +55,10 @@ describe("SuggestionsList", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: false });
+    mockUseGeocodeAutocomplete.mockReturnValue({
+      data: null,
+      isLoading: false,
+    });
   });
 
   it("??????????????", () => {
@@ -111,7 +118,9 @@ describe("SuggestionsList", () => {
     renderComponent({ query: "Tokyo" });
 
     expect(
-      screen.getByText(/\u5019\u88dc\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f/),
+      screen.getByText(
+        /\u5019\u88dc\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f/,
+      ),
     ).toBeInTheDocument();
   });
 
