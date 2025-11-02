@@ -10,4 +10,4 @@ on:
 jobs:
   frontend:
     name: Frontend CI
-    uses: ./.github/workflows/frontend.yml
+    uses: ./.github/workflows/frontend-ci.yml
