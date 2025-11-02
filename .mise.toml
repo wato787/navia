@@ -35,3 +35,10 @@ run = "bunx biome format --check"
 [tasks.check]
 description = "Run Biome check (lint + format)"
 run = "bunx biome check"
+
+[tasks."type-check"]
+description = "Run TypeScript type checking for frontend and backend"
+run = [
+  "bunx tsc --noEmit --project apps/backend/tsconfig.json",
+  "bunx tsc --noEmit --project apps/frontend/tsconfig.json"
+]

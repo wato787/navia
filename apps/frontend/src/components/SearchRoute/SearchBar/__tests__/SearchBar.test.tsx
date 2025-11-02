@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { SearchBar } from "..";
 
 describe("SearchBar", () => {
-  it("??????????????????", async () => {
+  it("入力、検索、クリアボタンの動作が正しく機能する", async () => {
     const user = userEvent.setup();
     const handleSearch = vi.fn();
     const handleChange = vi.fn<(value: string) => void>();
