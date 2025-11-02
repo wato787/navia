@@ -60,6 +60,44 @@ export async function getRoute(
 }
 
 /**
+ * Geocoding APIでautocomplete候補を取得
+ */
+export async function geocodeAutocomplete(
+  query: string,
+  accessToken: string,
+  options?: {
+    proximity?: [number, number];
+    limit?: number;
+  },
+): Promise<MapboxGeocodeFeature[] | null> {
+  try {
+    const params = new URLSearchParams({
+      access_token: accessToken,
+      autocomplete: "true",
+      language: "ja",
+      limit: String(options?.limit ?? 5),
+    });
+
+    if (options?.proximity) {
+      params.append("proximity", `${options.proximity[0]},${options.proximity[1]}`);
+    }
+
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+      query,
+    )}.json?${params.toString()}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.features && Array.isArray(data.features)) {
+      return data.features;
+    }
+    return null;
+  } catch (error) {
+    console.error("Geocoding autocomplete error:", error);
+    return null;
+  }
+}
+
+/**
  * GeoJSONの座標からバウンディングボックスを計算
  */
 export function calculateBounds(
@@ -77,5 +115,31 @@ export function calculateBounds(
       [-Infinity, -Infinity],
     ] as [[number, number], [number, number]],
   );
+}
+
+/**
+ * Mapbox Geocoding APIのレスポンス型
+ */
+export interface MapboxGeocodeFeature {
+  id: string;
+  type: string;
+  place_type: string[];
+  relevance: number;
+  properties: {
+    accuracy?: string;
+    [key: string]: unknown;
+  };
+  text: string;
+  place_name: string;
+  center: [number, number]; // [lng, lat]
+  geometry: {
+    type: string;
+    coordinates: [number, number];
+  };
+  context?: Array<{
+    id: string;
+    text: string;
+    [key: string]: unknown;
+  }>;
 }
 
