@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
-import { ROUTE_LAYER_CONFIG, FIT_BOUNDS_PADDING } from "@/routes/const";
+import { ROUTE_LAYER_CONFIG, FIT_BOUNDS_PADDING } from "./const";
 import { calculateBounds } from "@/lib/mapbox";
 
 /**

@@ -1,3 +1,5 @@
+// IndexPage用のMapbox設定
+
 // Mapbox設定
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 

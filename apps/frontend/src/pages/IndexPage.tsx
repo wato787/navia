@@ -15,12 +15,12 @@ import {
   NAVIGATION_CONTROL_PROPS,
   GEOLOCATE_CONTROL_PROPS,
 } from "./const";
-import { useCurrentLocation } from "@/hooks/useCurrentLocation";
-import { useRouteSearch } from "@/hooks/useRouteSearch";
+import { useCurrentLocation } from "./useCurrentLocation";
+import { useRouteSearch } from "./useRouteSearch";
 
 type MapContentProps = {
   mapRef: React.RefObject<MapRef | null>;
-}
+};
 
 function MapContent({ mapRef }: MapContentProps) {
   const { currentLocation } = useCurrentLocation(mapRef);
@@ -34,7 +34,7 @@ function MapContent({ mapRef }: MapContentProps) {
   );
 }
 
-export default function Index() {
+export default function IndexPage() {
   const mapRef = useRef<MapRef>(null);
 
   // コントロールコンポーネントをメモ化（再レンダリング時に再作成を防ぐ）
@@ -66,3 +66,4 @@ export default function Index() {
     </div>
   );
 }
+

@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
-import { MAPBOX_TOKEN } from "@/routes/const";
-import { INITIAL_VIEW_STATE } from "@/routes/const";
+import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { geocodeAddress, getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
 
