@@ -5,7 +5,7 @@ import MapComponent, {
   ScaleControl,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { DestinationSearchBar } from "@/components/DestinationSearchBar";
+import { SearchRoute } from "@/components/SearchRoute";
 import type { MapRef } from "react-map-gl/mapbox";
 import {
   MAPBOX_TOKEN,
@@ -28,7 +28,10 @@ function MapContent({ mapRef }: MapContentProps) {
 
   return (
     <>
-      <DestinationSearchBar onSearch={(destination) => searchRoute({ destination, currentLocation })} />
+      <SearchRoute
+        onSearch={(destination) => searchRoute({ destination, currentLocation })}
+        currentLocation={currentLocation}
+      />
       <GeolocateControl {...GEOLOCATE_CONTROL_PROPS} />
     </>
   );

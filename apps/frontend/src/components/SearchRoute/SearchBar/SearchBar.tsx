@@ -1,39 +1,43 @@
-import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-interface DestinationSearchBarProps {
-  onSearch?: (destination: string) => void;
+type SearchBarProps = {
+  value: string;
+  onChange: (value: string) => void;
+  onSearch?: (value: string) => void;
   placeholder?: string;
   className?: string;
-}
+  children?: React.ReactNode;
+};
 
-export function DestinationSearchBar({
+export function SearchBar({
+  value,
+  onChange,
   onSearch,
   placeholder = "目的地を検索",
   className,
-}: DestinationSearchBarProps) {
-  const [destination, setDestination] = useState<string>("");
+  children,
+}: SearchBarProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (destination.trim() && onSearch) {
-      onSearch(destination.trim());
+    if (value.trim() && onSearch) {
+      onSearch(value.trim());
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDestination(e.target.value);
+    onChange(e.target.value);
   };
 
   const handleClear = () => {
-    setDestination("");
+    onChange("");
   };
 
   const handleSearchClick = () => {
-    if (destination.trim() && onSearch) {
-      onSearch(destination.trim());
+    if (value.trim() && onSearch) {
+      onSearch(value.trim());
     }
   };
 
@@ -48,7 +52,7 @@ export function DestinationSearchBar({
         <div className="relative group">
           <Input
             type="text"
-            value={destination}
+            value={value}
             onChange={handleChange}
             placeholder={placeholder}
             className={cn(
@@ -61,7 +65,7 @@ export function DestinationSearchBar({
             )}
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
-            {destination && (
+            {value && (
               <button
                 type="button"
                 onClick={handleClear}
@@ -74,10 +78,10 @@ export function DestinationSearchBar({
             <button
               type="button"
               onClick={handleSearchClick}
-              disabled={!destination.trim()}
+              disabled={!value.trim()}
               className={cn(
                 "p-2 rounded-full transition-colors",
-                destination.trim()
+                value.trim()
                   ? "bg-blue-500 hover:bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed",
               )}
@@ -87,8 +91,8 @@ export function DestinationSearchBar({
             </button>
           </div>
         </div>
+        {children}
       </form>
     </div>
   );
 }
-
