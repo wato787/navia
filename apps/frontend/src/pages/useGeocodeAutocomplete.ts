@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
-import { geocodeAutocomplete, type MapboxGeocodeFeature } from "@/lib/mapbox";
+import {
+  type GooglePlacesAutocompletePrediction,
+  googlePlacesAutocomplete,
+} from "@/lib/google-places";
 import type { Location } from "@/types/location";
-import { MAPBOX_TOKEN } from "./const";
+import { GOOGLE_PLACES_API_KEY } from "./const";
 
 /**
- * Debounce付きのGeocoding Autocompleteフック
+ * Debounce付きのGoogle Places Autocompleteフック
  */
 export function useGeocodeAutocomplete(
   query: string,
@@ -17,18 +20,24 @@ export function useGeocodeAutocomplete(
   const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
-  const useGeocodeAutocompleteQuery = useQuery<MapboxGeocodeFeature[] | null>({
+  const useGeocodeAutocompleteQuery = useQuery<
+    GooglePlacesAutocompletePrediction[] | null
+  >({
     queryKey: ["geocode-autocomplete", debouncedQuery, options?.proximity],
     queryFn: async () => {
-      if (!MAPBOX_TOKEN) {
-        throw new Error("Mapbox token is not configured");
+      if (!GOOGLE_PLACES_API_KEY) {
+        throw new Error("Google Places API key is not configured");
       }
-      return await geocodeAutocomplete(debouncedQuery, MAPBOX_TOKEN, {
-        proximity: options?.proximity,
-        limit: options?.limit,
-      });
+      return await googlePlacesAutocomplete(
+        debouncedQuery,
+        GOOGLE_PLACES_API_KEY,
+        {
+          proximity: options?.proximity,
+          limit: options?.limit,
+        },
+      );
     },
-    enabled: debouncedQuery.trim().length > 0 && !!MAPBOX_TOKEN,
+    enabled: debouncedQuery.trim().length > 0 && !!GOOGLE_PLACES_API_KEY,
     staleTime: 1000 * 60 * 5, // 5分間キャッシュ
   });
 

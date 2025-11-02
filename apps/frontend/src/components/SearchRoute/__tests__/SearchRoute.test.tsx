@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
 import { SearchRoute } from "..";
 
 type UseGeocodeAutocomplete =
   typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
 
 type UseGeocodeAutocompleteReturn = {
-  data: MapboxGeocodeFeature[] | null;
+  data: GooglePlacesAutocompletePrediction[] | null;
   isLoading: boolean;
 };
 
@@ -23,22 +23,19 @@ vi.mock("@/pages/useGeocodeAutocomplete", () => ({
   useGeocodeAutocomplete: mockUseGeocodeAutocomplete,
 }));
 
-const createSuggestion = (overrides: Partial<MapboxGeocodeFeature> = {}) =>
+const createSuggestion = (
+  overrides: Partial<GooglePlacesAutocompletePrediction> = {},
+) =>
   ({
-    id: "route-suggestion-1",
-    type: "Feature",
-    place_type: ["place"],
-    relevance: 1,
-    properties: {},
-    text: "Sample",
-    place_name: "Sample Place",
-    center: [139.6917, 35.6895],
-    geometry: {
-      type: "Point",
-      coordinates: [139.6917, 35.6895],
+    placeId: "route-suggestion-1",
+    description: "Sample Place",
+    structuredFormatting: {
+      mainText: "Sample",
+      secondaryText: "Sample Place",
     },
+    types: ["establishment"],
     ...overrides,
-  }) satisfies MapboxGeocodeFeature;
+  }) satisfies GooglePlacesAutocompletePrediction;
 
 describe("SearchRoute", () => {
   beforeEach(() => {
@@ -71,9 +68,11 @@ describe("SearchRoute", () => {
 
   it("候補をクリックするとplace_nameがonSearchに渡され、inputに設定される", async () => {
     const suggestion = createSuggestion({
-      id: "route-suggestion-2",
-      text: "Tokyo",
-      place_name: "Tokyo, Japan",
+      placeId: "route-suggestion-2",
+      structuredFormatting: {
+        mainText: "Tokyo",
+        secondaryText: "Japan",
+      },
     });
 
     mockUseGeocodeAutocomplete.mockReturnValue({
