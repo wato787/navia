@@ -1,0 +1,33 @@
+name: Backend CI
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: "1.1.38"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        working-directory: apps/backend
+        run: bunx biome lint ./src
+
+      - name: Type Check
+        working-directory: apps/backend
+        run: bunx tsc --noEmit
+
+      - name: Build backend
+        working-directory: apps/backend
+        run: bun run build
