@@ -1,1 +1,0 @@
-export { healthModule } from "./health";
