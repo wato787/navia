@@ -1,8 +1,13 @@
-import { useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
 import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { geocodeAddress, getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
+
+type RouteSearchParams = {
+  destination: string;
+  currentLocation: [number, number] | null;
+};
 
 /**
  * 目的地検索と経路表示を管理するフック
@@ -13,18 +18,16 @@ export function useRouteSearch(
 ) {
   const { displayRoute } = useRouteDisplay(mapRef);
 
-  const handleDestinationSearch = useCallback(
-    async (destination: string) => {
-      const map = mapRef.current?.getMap();
-      if (!MAPBOX_TOKEN || !map) return;
-
-      console.log("目的地:", destination);
+  const mutation = useMutation({
+    mutationFn: async ({ destination }: RouteSearchParams) => {
+      if (!MAPBOX_TOKEN) {
+        throw new Error("Mapbox token is not configured");
+      }
 
       // 目的地を座標に変換
       const destinationCoords = await geocodeAddress(destination, MAPBOX_TOKEN);
       if (!destinationCoords) {
-        alert("目的地が見つかりませんでした");
-        return;
+        throw new Error("目的地が見つかりませんでした");
       }
 
       // 現在地が取得できていない場合は、初期位置を使用
@@ -36,16 +39,22 @@ export function useRouteSearch(
       // 経路を取得
       const route = await getRoute(startCoords, destinationCoords, MAPBOX_TOKEN);
       if (!route) {
-        alert("経路を取得できませんでした");
-        return;
+        throw new Error("経路を取得できませんでした");
       }
 
+      return route;
+    },
+    onSuccess: async (route) => {
       // 経路を地図上に表示
       await displayRoute(route);
     },
-    [currentLocation, mapRef, displayRoute],
-  );
+    onError: (error: Error) => {
+      alert(error.message || "エラーが発生しました");
+    },
+  });
 
-  return { handleDestinationSearch };
+
+
+  return mutation;
 }
 

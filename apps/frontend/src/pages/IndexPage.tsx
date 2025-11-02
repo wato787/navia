@@ -24,11 +24,11 @@ type MapContentProps = {
 
 function MapContent({ mapRef }: MapContentProps) {
   const { currentLocation } = useCurrentLocation(mapRef);
-  const { handleDestinationSearch } = useRouteSearch(mapRef, currentLocation);
+  const { mutate: searchRoute } = useRouteSearch(mapRef, currentLocation);
 
   return (
     <>
-      <DestinationSearchBar onSearch={handleDestinationSearch} />
+      <DestinationSearchBar onSearch={(destination) => searchRoute({ destination, currentLocation })} />
       <GeolocateControl {...GEOLOCATE_CONTROL_PROPS} />
     </>
   );
@@ -58,6 +58,7 @@ export default function IndexPage() {
         mapStyle={MAPBOX_MAP_STYLE}
         pitchWithRotate={true}
         attributionControl={true}
+        language="ja"
       >
         {navigationControl}
         <MapContent mapRef={mapRef} />
