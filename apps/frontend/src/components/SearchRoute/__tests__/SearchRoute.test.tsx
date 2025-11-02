@@ -66,7 +66,7 @@ describe("SearchRoute", () => {
     });
   });
 
-  it("候補をクリックするとplace_nameがonSearchに渡され、inputに設定される", async () => {
+  it("候補をクリックするとmainText/secondaryTextがonSearchに渡され、inputに設定される", async () => {
     const suggestion = createSuggestion({
       placeId: "route-suggestion-2",
       structuredFormatting: {
