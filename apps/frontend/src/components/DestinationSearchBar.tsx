@@ -31,6 +31,12 @@ export function DestinationSearchBar({
     setDestination("");
   };
 
+  const handleSearchClick = () => {
+    if (destination.trim() && onSearch) {
+      onSearch(destination.trim());
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -40,19 +46,13 @@ export function DestinationSearchBar({
     >
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-            <Search 
-              className="h-5 w-5 text-gray-600" 
-              aria-hidden="true"
-            />
-          </div>
           <Input
             type="text"
             value={destination}
             onChange={handleChange}
             placeholder={placeholder}
             className={cn(
-              "pl-12 pr-12 h-14 text-base",
+              "pl-4 pr-24 h-14 text-base",
               "shadow-xl border border-gray-200",
               "bg-white backdrop-blur-md",
               "hover:shadow-2xl transition-shadow duration-200",
@@ -60,16 +60,32 @@ export function DestinationSearchBar({
               "focus-visible:border-blue-500/50",
             )}
           />
-          {destination && (
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
+            {destination && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="入力をクリア"
+              >
+                <X className="h-4 w-4 text-gray-600" />
+              </button>
+            )}
             <button
               type="button"
-              onClick={handleClear}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition-colors z-10"
-              aria-label="入力をクリア"
+              onClick={handleSearchClick}
+              disabled={!destination.trim()}
+              className={cn(
+                "p-2 rounded-full transition-colors",
+                destination.trim()
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed",
+              )}
+              aria-label="検索"
             >
-              <X className="h-4 w-4 text-gray-600" />
+              <Search className="h-5 w-5" />
             </button>
-          )}
+          </div>
         </div>
       </form>
     </div>
