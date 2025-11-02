@@ -1,6 +1,6 @@
+import path from "node:path";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -20,10 +20,10 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  // @ts-expect-error - vitestの型定義が含まれている
   test: {
     globals: true,
     environment: "happy-dom",
-    setupFiles: path.resolve(__dirname, "./src/test/setup.ts"),
-    css: true,
+    setupFiles: "./src/test/setup.ts",
   },
 });

@@ -13,7 +13,11 @@ const CURRENT_LEVEL: LogLevel = ENV.LOG_LEVEL;
 
 const shouldLog = (level: LogLevel) => LEVELS[level] >= LEVELS[CURRENT_LEVEL];
 
-const base = (level: LogLevel, message: string, payload?: Record<string, unknown>) => {
+const base = (
+  level: LogLevel,
+  message: string,
+  payload?: Record<string, unknown>,
+) => {
   if (!shouldLog(level)) return;
 
   const timestamp = new Date().toISOString();
@@ -29,8 +33,12 @@ const base = (level: LogLevel, message: string, payload?: Record<string, unknown
 };
 
 export const logger = {
-  debug: (message: string, payload?: Record<string, unknown>) => base("debug", message, payload),
-  info: (message: string, payload?: Record<string, unknown>) => base("info", message, payload),
-  warn: (message: string, payload?: Record<string, unknown>) => base("warn", message, payload),
-  error: (message: string, payload?: Record<string, unknown>) => base("error", message, payload),
+  debug: (message: string, payload?: Record<string, unknown>) =>
+    base("debug", message, payload),
+  info: (message: string, payload?: Record<string, unknown>) =>
+    base("info", message, payload),
+  warn: (message: string, payload?: Record<string, unknown>) =>
+    base("warn", message, payload),
+  error: (message: string, payload?: Record<string, unknown>) =>
+    base("error", message, payload),
 };

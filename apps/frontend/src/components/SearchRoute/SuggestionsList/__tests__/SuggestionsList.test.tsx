@@ -1,16 +1,24 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { SuggestionsList } from "..";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
 import type { ComponentProps } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { SuggestionsList } from "..";
 
-type UseGeocodeAutocomplete = typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
+type UseGeocodeAutocomplete =
+  typeof import("@/pages/useGeocodeAutocomplete").useGeocodeAutocomplete;
 
-const mockUseGeocodeAutocomplete = vi.hoisted(() =>
-  vi.fn<ReturnType<UseGeocodeAutocomplete>, Parameters<UseGeocodeAutocomplete>>(),
-);
+type UseGeocodeAutocompleteReturn = {
+  data: MapboxGeocodeFeature[] | null;
+  isLoading: boolean;
+};
+
+const mockUseGeocodeAutocomplete = vi.hoisted(() => {
+  const fn = vi.fn() as unknown as UseGeocodeAutocomplete & {
+    mockReturnValue: (value: UseGeocodeAutocompleteReturn) => void;
+  };
+  return fn;
+});
 
 vi.mock("@/pages/useGeocodeAutocomplete", () => ({
   useGeocodeAutocomplete: mockUseGeocodeAutocomplete,
@@ -51,10 +59,13 @@ describe("SuggestionsList", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: false });
+    mockUseGeocodeAutocomplete.mockReturnValue({
+      data: null,
+      isLoading: false,
+    });
   });
 
-  it("??????????????", () => {
+  it("空白文字のみのクエリでは何も表示されない", () => {
     const { container } = render(
       <SuggestionsList query="   " onSuggestionClick={vi.fn()} />,
     );
@@ -62,7 +73,7 @@ describe("SuggestionsList", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("??????????????", () => {
+  it("現在地が渡されたときにproximityが正しく渡される", () => {
     const location = { lat: 35.0, lng: 139.0 };
 
     renderComponent({ query: "Tokyo", currentLocation: location });
@@ -76,7 +87,7 @@ describe("SuggestionsList", () => {
     );
   });
 
-  it("?????????????????", () => {
+  it("ローディング中は「検索中...」が表示される", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: true });
 
     renderComponent({ query: "Tokyo" });
@@ -84,7 +95,7 @@ describe("SuggestionsList", () => {
     expect(screen.getByText(/\u691c\u7d22\u4e2d/)).toBeInTheDocument();
   });
 
-  it("?????????????", async () => {
+  it("候補をクリックするとonSuggestionClickが呼ばれる", async () => {
     const suggestion = createSuggestion({
       id: "suggestion-2",
       text: "Tokyo",
@@ -105,17 +116,19 @@ describe("SuggestionsList", () => {
     expect(onSuggestionClick).toHaveBeenCalledWith(suggestion);
   });
 
-  it("?????????????????????", () => {
+  it("候補がない場合は「候補が見つかりませんでした」が表示される", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: [], isLoading: false });
 
     renderComponent({ query: "Tokyo" });
 
     expect(
-      screen.getByText(/\u5019\u88dc\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f/),
+      screen.getByText(
+        /\u5019\u88dc\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f/,
+      ),
     ).toBeInTheDocument();
   });
 
-  it("Enter???????????", async () => {
+  it("Enterキーで候補を選択できる", async () => {
     const suggestion = createSuggestion({
       id: "suggestion-3",
       text: "Shinjuku",

@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
-import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { Location } from "@/types/location";
 
 type SuggestionsListProps = {
@@ -15,9 +15,7 @@ export function SuggestionsList({
   onSuggestionClick,
 }: SuggestionsListProps) {
   const { data: suggestions, isLoading } = useGeocodeAutocomplete(query, {
-    proximity: currentLocation
-      ? currentLocation
-      : undefined,
+    proximity: currentLocation ? currentLocation : undefined,
     limit: 5,
   });
 

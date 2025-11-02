@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { SearchBar } from "./SearchBar";
-import { SuggestionsList } from "./SuggestionsList";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
 import type { Location } from "@/types/location";
+import { SearchBar } from "./SearchBar";
+import { SuggestionsList } from "./SuggestionsList";
 
 type SearchRouteProps = {
   onSearch?: (destination: string) => void;

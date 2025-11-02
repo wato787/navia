@@ -1,8 +1,7 @@
 import type { Hono } from "hono";
-
+import { healthModule } from "../modules";
 import type { AppBindings } from "../types/app";
 import type { RouteModule } from "../types/router";
-import { healthModule } from "../modules";
 
 export const apiModules: RouteModule[] = [healthModule];
 

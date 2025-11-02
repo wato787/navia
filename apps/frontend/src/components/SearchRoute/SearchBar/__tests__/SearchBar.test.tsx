@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { SearchBar } from "..";
 
 describe("SearchBar", () => {
-  it("??????????????????", async () => {
+  it("入力、検索、クリアボタンの動作が正しく機能する", async () => {
     const user = userEvent.setup();
     const handleSearch = vi.fn();
     const handleChange = vi.fn<(value: string) => void>();
@@ -46,7 +46,9 @@ describe("SearchBar", () => {
     const buttonsAfterInput = screen.getAllByRole("button");
     expect(buttonsAfterInput).toHaveLength(2);
 
-    const clearButton = buttonsAfterInput.find((button) => button !== searchButton);
+    const clearButton = buttonsAfterInput.find(
+      (button) => button !== searchButton,
+    );
     expect(clearButton).toBeDefined();
 
     const clearLabel = clearButton?.getAttribute("aria-label");
@@ -59,10 +61,12 @@ describe("SearchBar", () => {
     expect(handleSearch).toHaveBeenCalledOnce();
     expect(handleSearch).toHaveBeenCalledWith(TRIMMED_QUERY);
 
-    await user.click(clearButton!);
+    if (clearButton) {
+      await user.click(clearButton);
 
-    expect(handleChange).toHaveBeenLastCalledWith("");
-    expect(searchButton).toBeDisabled();
-    expect(input).toHaveValue("");
+      expect(handleChange).toHaveBeenLastCalledWith("");
+      expect(searchButton).toBeDisabled();
+      expect(input).toHaveValue("");
+    }
   });
 });

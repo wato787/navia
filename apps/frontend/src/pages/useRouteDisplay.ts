@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
-import { ROUTE_LAYER_CONFIG, FIT_BOUNDS_PADDING } from "./const";
 import { calculateBounds } from "@/lib/mapbox";
+import { FIT_BOUNDS_PADDING, ROUTE_LAYER_CONFIG } from "./const";
 
 /**
  * 経路を地図上に表示するフック
