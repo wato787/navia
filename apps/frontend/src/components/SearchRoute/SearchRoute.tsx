@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { SuggestionsList } from "./SuggestionsList";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import type { GooglePlaceAutocompleteSuggestion } from "@/lib/googlePlaces";
 import type { Location } from "@/types/location";
 
 type SearchRouteProps = {
@@ -18,10 +18,17 @@ export function SearchRoute({ onSearch, currentLocation }: SearchRouteProps) {
     }
   };
 
-  const handleSuggestionClick = (suggestion: MapboxGeocodeFeature) => {
-    setValue(suggestion.place_name);
+  const handleSuggestionClick = (
+    suggestion: GooglePlaceAutocompleteSuggestion,
+  ) => {
+    const displayValue = suggestion.text
+      ? suggestion.text
+      : [suggestion.primaryText, suggestion.secondaryText]
+          .filter(Boolean)
+          .join(" ");
+    setValue(displayValue);
     if (onSearch) {
-      onSearch(suggestion.place_name);
+      onSearch(displayValue);
     }
   };
 
