@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { SearchBar } from "..";
 
 describe("SearchBar", () => {
-  it("handles user typing, search execution, and clearing", async () => {
+  it("??????????????????", async () => {
     const user = userEvent.setup();
     const handleSearch = vi.fn();
     const handleChange = vi.fn<(value: string) => void>();

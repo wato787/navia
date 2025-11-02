@@ -37,7 +37,7 @@ describe("SearchRoute", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: [], isLoading: false });
   });
 
-  it("invokes onSearch with trimmed query when search button is clicked", async () => {
+  it("???????????????????", async () => {
     const user = userEvent.setup();
     const handleSearch = vi.fn();
 
@@ -60,7 +60,7 @@ describe("SearchRoute", () => {
     });
   });
 
-  it("updates the input value and triggers onSearch when a suggestion is selected", async () => {
+  it("???????????????????", async () => {
     const suggestion = createSuggestion({
       id: "route-suggestion-2",
       text: "Tokyo",

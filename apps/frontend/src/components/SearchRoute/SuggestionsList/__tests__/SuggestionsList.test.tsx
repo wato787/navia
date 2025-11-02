@@ -54,7 +54,7 @@ describe("SuggestionsList", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: false });
   });
 
-  it("renders nothing when query is blank", () => {
+  it("??????????????", () => {
     const { container } = render(
       <SuggestionsList query="   " onSuggestionClick={vi.fn()} />,
     );
@@ -62,7 +62,7 @@ describe("SuggestionsList", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("passes query and location to the autocomplete hook", () => {
+  it("??????????????", () => {
     const location = { lat: 35.0, lng: 139.0 };
 
     renderComponent({ query: "Tokyo", currentLocation: location });
@@ -76,7 +76,7 @@ describe("SuggestionsList", () => {
     );
   });
 
-  it("shows loader while fetching suggestions", () => {
+  it("?????????????????", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: null, isLoading: true });
 
     renderComponent({ query: "Tokyo" });
@@ -84,7 +84,7 @@ describe("SuggestionsList", () => {
     expect(screen.getByText(/\u691c\u7d22\u4e2d/)).toBeInTheDocument();
   });
 
-  it("renders suggestions and handles click selection", async () => {
+  it("?????????????", async () => {
     const suggestion = createSuggestion({
       id: "suggestion-2",
       text: "Tokyo",
@@ -105,7 +105,7 @@ describe("SuggestionsList", () => {
     expect(onSuggestionClick).toHaveBeenCalledWith(suggestion);
   });
 
-  it("renders empty state message when no suggestions are available", () => {
+  it("?????????????????????", () => {
     mockUseGeocodeAutocomplete.mockReturnValue({ data: [], isLoading: false });
 
     renderComponent({ query: "Tokyo" });
@@ -115,7 +115,7 @@ describe("SuggestionsList", () => {
     ).toBeInTheDocument();
   });
 
-  it("supports keyboard selection via Enter key", async () => {
+  it("Enter???????????", async () => {
     const suggestion = createSuggestion({
       id: "suggestion-3",
       text: "Shinjuku",
