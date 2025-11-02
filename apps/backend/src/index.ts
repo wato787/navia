@@ -1,16 +1,17 @@
-import { Hono } from "hono";
 import { serve } from "bun";
 
-const app = new Hono();
+import { createApp } from "./app";
+import { ENV } from "./config/env";
+import { logger } from "./lib/logger";
 
-app.get("/", (c) => c.json({ message: "Hello from Hono on Bun" }));
-app.get("/healthz", (c) => c.text("ok"));
-
-const port = Number(process.env.PORT ?? 8787);
+const app = createApp();
 
 serve({
-  port,
+  port: ENV.PORT,
   fetch: app.fetch,
 });
 
-console.log(`Hono server ready on http://localhost:${port}`);
+logger.info("server.started", {
+  port: ENV.PORT,
+  url: `http://localhost:${ENV.PORT}`,
+});
