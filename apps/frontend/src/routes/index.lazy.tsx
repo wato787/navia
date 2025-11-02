@@ -5,6 +5,7 @@ import MapComponent, {
   ScaleControl,
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { DestinationSearchBar } from "@/components/DestinationSearchBar";
 
 // 環境変数と定数はコンポーネント外で一度だけ評価される
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
@@ -58,8 +59,14 @@ export default function Index() {
     );
   }
 
+  const handleDestinationSearch = (destination: string) => {
+    // TODO: 目的地検索の実装
+    console.log("目的地:", destination);
+  };
+
   return (
     <div className="relative w-screen h-screen">
+      <DestinationSearchBar onSearch={handleDestinationSearch} />
       <MapComponent
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={INITIAL_VIEW_STATE}
