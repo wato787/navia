@@ -49,4 +49,3 @@ export const FIT_BOUNDS_PADDING = {
   left: 100,
   right: 100,
 } as const;
-

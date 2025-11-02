@@ -2,16 +2,14 @@ import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { SuggestionsList } from "./SuggestionsList";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { Location } from "@/types/location";
 
 type SearchRouteProps = {
   onSearch?: (destination: string) => void;
-  currentLocation?: [number, number] | null;
+  currentLocation?: Location | null;
 };
 
-export function SearchRoute({
-  onSearch,
-  currentLocation,
-}: SearchRouteProps) {
+export function SearchRoute({ onSearch, currentLocation }: SearchRouteProps) {
   const [value, setValue] = useState<string>("");
 
   const handleSearch = (destination: string) => {

@@ -13,7 +13,7 @@ export function useGeocodeAutocomplete(
     limit?: number;
   },
 ) {
-  const debounceMs =  500;
+  const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
   const useGeocodeAutocompleteQuery = useQuery<MapboxGeocodeFeature[] | null>({
@@ -27,11 +27,9 @@ export function useGeocodeAutocomplete(
         limit: options?.limit,
       });
     },
-    enabled:
-      debouncedQuery.trim().length > 0 &&
-      !!MAPBOX_TOKEN,
+    enabled: debouncedQuery.trim().length > 0 && !!MAPBOX_TOKEN,
     staleTime: 1000 * 60 * 5, // 5分間キャッシュ
   });
 
-  return useGeocodeAutocompleteQuery
+  return useGeocodeAutocompleteQuery;
 }

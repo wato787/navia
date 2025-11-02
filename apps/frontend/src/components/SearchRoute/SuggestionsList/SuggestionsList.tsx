@@ -1,12 +1,13 @@
 import { Loader2 } from "lucide-react";
 import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
 import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { Location } from "@/types/location";
 
 type SuggestionsListProps = {
   query: string;
-  currentLocation?: [number, number] | null;
+  currentLocation?: Location | null;
   onSuggestionClick: (suggestion: MapboxGeocodeFeature) => void;
-}
+};
 
 export function SuggestionsList({
   query,
@@ -14,11 +15,14 @@ export function SuggestionsList({
   onSuggestionClick,
 }: SuggestionsListProps) {
   const { data: suggestions, isLoading } = useGeocodeAutocomplete(query, {
-    proximity: currentLocation ?? undefined,
+    proximity: currentLocation
+      ? [currentLocation.lng, currentLocation.lat]
+      : undefined,
     limit: 5,
   });
 
-  const showSuggestions = query.trim().length > 0 && (suggestions !== null || isLoading);
+  const showSuggestions =
+    query.trim().length > 0 && (suggestions !== null || isLoading);
 
   if (!showSuggestions) {
     return null;
@@ -40,9 +44,7 @@ export function SuggestionsList({
               onClick={() => onSuggestionClick(suggestion)}
               className="px-4 py-3 cursor-pointer transition-colors hover:bg-blue-50"
             >
-              <div className="font-medium text-gray-900">
-                {suggestion.text}
-              </div>
+              <div className="font-medium text-gray-900">{suggestion.text}</div>
               {suggestion.place_name !== suggestion.text && (
                 <div className="text-sm text-gray-500 mt-0.5">
                   {suggestion.place_name}

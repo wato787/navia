@@ -19,7 +19,6 @@ export function SearchBar({
   className,
   children,
 }: SearchBarProps) {
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim() && onSearch) {

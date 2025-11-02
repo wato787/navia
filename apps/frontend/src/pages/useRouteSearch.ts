@@ -3,10 +3,11 @@ import type { MapRef } from "react-map-gl/mapbox";
 import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
 import { geocodeAddress, getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
+import { Location } from "@/types/location";
 
 type RouteSearchParams = {
   destination: string;
-  currentLocation: [number, number] | null;
+  currentLocation: Location | null;
 };
 
 /**
@@ -14,7 +15,7 @@ type RouteSearchParams = {
  */
 export function useRouteSearch(
   mapRef: React.RefObject<MapRef | null>,
-  currentLocation: [number, number] | null,
+  currentLocation: Location | null,
 ) {
   const { displayRoute } = useRouteDisplay(mapRef);
 
@@ -31,13 +32,17 @@ export function useRouteSearch(
       }
 
       // 現在地が取得できていない場合は、初期位置を使用
-      const startCoords = currentLocation || [
-        INITIAL_VIEW_STATE.longitude,
-        INITIAL_VIEW_STATE.latitude,
-      ] as [number, number];
+      const startCoords = currentLocation || {
+        lat: INITIAL_VIEW_STATE.latitude,
+        lng: INITIAL_VIEW_STATE.longitude,
+      };
 
       // 経路を取得
-      const route = await getRoute(startCoords, destinationCoords, MAPBOX_TOKEN);
+      const route = await getRoute(
+        startCoords,
+        destinationCoords as Location,
+        MAPBOX_TOKEN,
+      );
       if (!route) {
         throw new Error("経路を取得できませんでした");
       }
@@ -53,8 +58,5 @@ export function useRouteSearch(
     },
   });
 
-
-
   return mutation;
 }
-

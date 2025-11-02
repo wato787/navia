@@ -23,16 +23,21 @@ type MapContentProps = {
 };
 
 function MapContent({ mapRef }: MapContentProps) {
-  const { currentLocation } = useCurrentLocation(mapRef);
+  const { currentLocation, handleGeolocate } = useCurrentLocation();
   const { mutate: searchRoute } = useRouteSearch(mapRef, currentLocation);
 
   return (
     <>
       <SearchRoute
-        onSearch={(destination) => searchRoute({ destination, currentLocation })}
+        onSearch={(destination) =>
+          searchRoute({ destination, currentLocation })
+        }
         currentLocation={currentLocation}
       />
-      <GeolocateControl {...GEOLOCATE_CONTROL_PROPS} />
+      <GeolocateControl
+        {...GEOLOCATE_CONTROL_PROPS}
+        onGeolocate={handleGeolocate}
+      />
     </>
   );
 }
@@ -46,10 +51,7 @@ export default function IndexPage() {
     [],
   );
 
-  const scaleControl = useMemo(
-    () => <ScaleControl unit="metric" />,
-    [],
-  );
+  const scaleControl = useMemo(() => <ScaleControl unit="metric" />, []);
 
   return (
     <div className="relative w-screen h-screen">
@@ -70,4 +72,3 @@ export default function IndexPage() {
     </div>
   );
 }
-

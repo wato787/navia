@@ -1,3 +1,5 @@
+import { Location } from "@/types/location";
+
 /**
  * Mapbox API関連のユーティリティ関数
  */
@@ -8,7 +10,7 @@
 export async function geocodeAddress(
   address: string,
   accessToken: string,
-): Promise<[number, number] | null> {
+): Promise<Location | null> {
   try {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
       address,
@@ -17,7 +19,7 @@ export async function geocodeAddress(
     const data = await response.json();
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
-      return [lng, lat];
+      return { lng, lat };
     }
     return null;
   } catch (error) {
@@ -30,12 +32,12 @@ export async function geocodeAddress(
  * Directions APIで経路を取得
  */
 export async function getRoute(
-  start: [number, number],
-  end: [number, number],
+  start: Location,
+  end: Location,
   accessToken: string,
 ): Promise<GeoJSON.FeatureCollection | null> {
   try {
-    const coordinates = `${start[0]},${start[1]};${end[0]},${end[1]}`;
+    const coordinates = `${start.lng},${start.lat};${end.lng},${end.lat}`;
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&steps=true&access_token=${accessToken}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -79,7 +81,10 @@ export async function geocodeAutocomplete(
     });
 
     if (options?.proximity) {
-      params.append("proximity", `${options.proximity[0]},${options.proximity[1]}`);
+      params.append(
+        "proximity",
+        `${options.proximity[0]},${options.proximity[1]}`,
+      );
     }
 
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
@@ -142,4 +147,3 @@ export interface MapboxGeocodeFeature {
     [key: string]: unknown;
   }>;
 }
-

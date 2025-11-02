@@ -32,7 +32,8 @@ export function useRouteDisplay(mapRef: React.RefObject<MapRef | null>) {
       });
 
       // 経路全体が見えるようにカメラを調整
-      const coordinates = routeGeoJson.features[0].geometry as GeoJSON.LineString;
+      const coordinates = routeGeoJson.features[0]
+        .geometry as GeoJSON.LineString;
       const bounds = calculateBounds(coordinates.coordinates);
 
       map.fitBounds(bounds, {
@@ -44,4 +45,3 @@ export function useRouteDisplay(mapRef: React.RefObject<MapRef | null>) {
 
   return { displayRoute };
 }
-
