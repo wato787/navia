@@ -1,12 +1,21 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { MAPBOX_TOKEN, INITIAL_VIEW_STATE } from "./const";
-import { geocodeAddress, getRoute } from "@/lib/mapbox";
+import {
+  MAPBOX_TOKEN,
+  INITIAL_VIEW_STATE,
+  GOOGLE_MAPS_API_KEY,
+} from "./const";
+import { getRoute } from "@/lib/mapbox";
 import { useRouteDisplay } from "./useRouteDisplay";
 import type { Location } from "@/types/location";
+import type { DestinationSelection } from "@/components/SearchRoute";
+import {
+  getPlaceDetails,
+  geocodeAddressWithGoogle,
+} from "@/api/googlePlaces";
 
 type RouteSearchParams = {
-  destination: string;
+  destination: DestinationSelection;
   currentLocation: Location | null;
 };
 
@@ -20,19 +29,46 @@ export function useRouteSearch(
   const { displayRoute } = useRouteDisplay(mapRef);
 
   const mutation = useMutation({
-    mutationFn: async ({ destination }: RouteSearchParams) => {
+    mutationFn: async ({ destination, currentLocation: currentLocationParam }: RouteSearchParams) => {
       if (!MAPBOX_TOKEN) {
         throw new Error("Mapbox token is not configured");
       }
 
+      if (!GOOGLE_MAPS_API_KEY) {
+        throw new Error("Google Maps API key is not configured");
+      }
+
       // 目的地を座標に変換
-      const destinationCoords = await geocodeAddress(destination, MAPBOX_TOKEN);
+      let destinationCoords: Location | null = null;
+
+      if (destination.placeId) {
+        const place = await getPlaceDetails(
+          destination.placeId,
+          GOOGLE_MAPS_API_KEY,
+        );
+
+        if (place) {
+          destinationCoords = { lat: place.lat, lng: place.lng };
+        }
+      }
+
+      if (!destinationCoords && destination.description.trim().length > 0) {
+        const geocoded = await geocodeAddressWithGoogle(
+          destination.description,
+          GOOGLE_MAPS_API_KEY,
+        );
+
+        if (geocoded) {
+          destinationCoords = { lat: geocoded.lat, lng: geocoded.lng };
+        }
+      }
+
       if (!destinationCoords) {
         throw new Error("目的地が見つかりませんでした");
       }
 
       // 現在地が取得できていない場合は、初期位置を使用
-      const startCoords = currentLocation || {
+      const startCoords = currentLocationParam || currentLocation || {
         lat: INITIAL_VIEW_STATE.latitude,
         lng: INITIAL_VIEW_STATE.longitude,
       };

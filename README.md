@@ -17,6 +17,18 @@ mise install
 mise run install
 ```
 
+## 環境変数
+
+フロントエンドでは Mapbox と Google Maps Platform のキーを `.env`（または `.env.local`）に設定してください。
+
+```bash
+# apps/frontend 用
+VITE_MAPBOX_ACCESS_TOKEN="<Mapbox のアクセストークン>"
+VITE_GOOGLE_MAPS_API_KEY="<Google Maps API キー>"
+```
+
+Google Maps API キーでは Places API と Geocoding API が有効になっている必要があります。
+
 ## 開発サーバーの起動
 
 フロントエンドとバックエンドを同時に起動します。

@@ -3,6 +3,9 @@
 // Mapbox設定
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 
+// Google設定
+export const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
+
 // 初期ビュー状態（東京駅付近）
 export const INITIAL_VIEW_STATE = {
   longitude: 139.767125,

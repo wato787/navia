@@ -29,8 +29,8 @@ function MapContent({ mapRef }: MapContentProps) {
   return (
     <>
       <SearchRoute
-        onSearch={(destination) =>
-          searchRoute({ destination, currentLocation })
+        onSearch={(selection) =>
+          searchRoute({ destination: selection, currentLocation })
         }
         currentLocation={currentLocation}
       />

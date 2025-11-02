@@ -1,12 +1,12 @@
 import { Loader2 } from "lucide-react";
-import { useGeocodeAutocomplete } from "@/pages/useGeocodeAutocomplete";
-import type { MapboxGeocodeFeature } from "@/lib/mapbox";
+import { usePlacesAutocomplete } from "@/pages/usePlacesAutocomplete";
+import type { GooglePlaceAutocompletePrediction } from "@/api/googlePlaces";
 import type { Location } from "@/types/location";
 
 type SuggestionsListProps = {
   query: string;
   currentLocation?: Location | null;
-  onSuggestionClick: (suggestion: MapboxGeocodeFeature) => void;
+  onSuggestionClick: (suggestion: GooglePlaceAutocompletePrediction) => void;
 };
 
 export function SuggestionsList({
@@ -14,15 +14,13 @@ export function SuggestionsList({
   currentLocation,
   onSuggestionClick,
 }: SuggestionsListProps) {
-  const { data: suggestions, isLoading } = useGeocodeAutocomplete(query, {
-    proximity: currentLocation
-      ? currentLocation
-      : undefined,
-    limit: 5,
+  const { data: suggestions = [], isLoading } = usePlacesAutocomplete(query, {
+    proximity: currentLocation ?? undefined,
+    radius: 5000,
   });
 
   const showSuggestions =
-    query.trim().length > 0 && (suggestions !== null || isLoading);
+    query.trim().length > 0 && (suggestions.length > 0 || isLoading);
 
   if (!showSuggestions) {
     return null;
@@ -36,11 +34,11 @@ export function SuggestionsList({
           検索中...
         </div>
       )}
-      {!isLoading && suggestions && suggestions.length > 0 && (
+      {!isLoading && suggestions.length > 0 && (
         <ul className="py-1">
           {suggestions.map((suggestion) => (
             <li
-              key={suggestion.id}
+              key={suggestion.place_id}
               onClick={() => onSuggestionClick(suggestion)}
               onKeyUp={(e) => {
                 if (e.key === "Enter") {
@@ -49,24 +47,23 @@ export function SuggestionsList({
               }}
               className="px-4 py-3 cursor-pointer transition-colors hover:bg-blue-50"
             >
-              <div className="font-medium text-gray-900">{suggestion.text}</div>
-              {suggestion.place_name !== suggestion.text && (
+              <div className="font-medium text-gray-900">
+                {suggestion.structured_formatting?.main_text ?? suggestion.description}
+              </div>
+              {suggestion.structured_formatting?.secondary_text && (
                 <div className="text-sm text-gray-500 mt-0.5">
-                  {suggestion.place_name}
+                  {suggestion.structured_formatting.secondary_text}
                 </div>
               )}
             </li>
           ))}
         </ul>
       )}
-      {!isLoading &&
-        suggestions &&
-        suggestions.length === 0 &&
-        query.trim().length > 0 && (
-          <div className="px-4 py-3 text-sm text-gray-500">
-            候補が見つかりませんでした
-          </div>
-        )}
+      {!isLoading && suggestions.length === 0 && query.trim().length > 0 && (
+        <div className="px-4 py-3 text-sm text-gray-500">
+          候補が見つかりませんでした
+        </div>
+      )}
     </div>
   );
 }
