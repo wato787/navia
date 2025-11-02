@@ -1,18 +1,13 @@
 import { Hono } from "hono";
 
 import { ENV } from "../config/env";
+import { ok } from "../utils/response";
 import type { AppBindings } from "../types/app";
-import { healthRouter } from "./health";
-
-const createApiRouter = () => {
-  const api = new Hono<AppBindings>();
-  api.route("/health", healthRouter);
-  return api;
-};
+import { registerApiModules } from "./modules";
 
 export const registerRoutes = (app: Hono<AppBindings>) => {
   app.get("/", (c) =>
-    c.json({
+    ok(c, {
       name: "@bun-mise/backend",
       status: "ok",
       environment: ENV.NODE_ENV,
@@ -22,5 +17,7 @@ export const registerRoutes = (app: Hono<AppBindings>) => {
 
   app.get("/healthz", (c) => c.redirect("/api/health/live"));
 
-  app.route("/api", createApiRouter());
+  const api = new Hono<AppBindings>();
+  registerApiModules(api);
+  app.route("/api", api);
 };

@@ -50,7 +50,7 @@ export const handleError = (err: unknown, c: Context<AppBindings>): Response => 
   } else if (err instanceof ZodError) {
     status = 400;
     code = "VALIDATION_ERROR";
-    message = "?????????????";
+    message = "Validation failed";
     details = err.flatten();
   } else if (err instanceof HTTPException) {
     status = err.status;
