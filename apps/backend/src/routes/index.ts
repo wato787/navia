@@ -1,11 +1,12 @@
 import { Hono } from "hono";
 
 import { ENV } from "../config/env";
+import health from "../modules/health";
 import type { AppBindings } from "../types/app";
 import { ok } from "../utils/response";
-import { registerApiModules } from "./modules";
 
 export const registerRoutes = (app: Hono<AppBindings>) => {
+  // Root endpoint
   app.get("/", (c) =>
     ok(c, {
       name: "@bun-mise/backend",
@@ -15,9 +16,12 @@ export const registerRoutes = (app: Hono<AppBindings>) => {
     }),
   );
 
+  // Legacy healthz redirect
   app.get("/healthz", (c) => c.redirect("/api/health/live"));
 
+  // API routes
   const api = new Hono<AppBindings>();
-  registerApiModules(api);
+  api.route("/health", health);
+
   app.route("/api", api);
 };

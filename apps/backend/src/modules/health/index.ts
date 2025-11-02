@@ -1,1 +1,1 @@
-export { healthModule } from "./health.module";
+export { default } from "./routes";
