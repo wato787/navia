@@ -3,7 +3,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
+import {
+  DirectionsUsecase,
+  type RouteData,
+} from "@/usecases/DirectionsUsecase";
 import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
 import { useRouteSearch } from "../useRouteSearch";
 
@@ -72,21 +75,21 @@ describe("useRouteSearch", () => {
 
   it("目的地を検索して経路を取得できる", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute = {
-      type: "FeatureCollection" as const,
+    const mockRoute: RouteData = {
+      type: "FeatureCollection",
       features: [
         {
-          type: "Feature" as const,
+          type: "Feature",
           properties: {
             distance: 1000,
             duration: 300,
           },
           geometry: {
-            type: "LineString" as const,
+            type: "LineString",
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ] as [number, number][],
+            ],
           },
         },
       ],
@@ -120,21 +123,21 @@ describe("useRouteSearch", () => {
 
   it("currentLocationがnullの場合、初期位置を使用する", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute = {
-      type: "FeatureCollection" as const,
+    const mockRoute: RouteData = {
+      type: "FeatureCollection",
       features: [
         {
-          type: "Feature" as const,
+          type: "Feature",
           properties: {
             distance: 1000,
             duration: 300,
           },
           geometry: {
-            type: "LineString" as const,
+            type: "LineString",
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ] as [number, number][],
+            ],
           },
         },
       ],
@@ -200,21 +203,21 @@ describe("useRouteSearch", () => {
   it("連続した複数の検索を処理できる", async () => {
     const mockDestinationCoords1 = { lat: 35.6895, lng: 139.6917 };
     const mockDestinationCoords2 = { lat: 35.6812, lng: 139.7671 };
-    const mockRoute = {
-      type: "FeatureCollection" as const,
+    const mockRoute: RouteData = {
+      type: "FeatureCollection",
       features: [
         {
-          type: "Feature" as const,
+          type: "Feature",
           properties: {
             distance: 1000,
             duration: 300,
           },
           geometry: {
-            type: "LineString" as const,
+            type: "LineString",
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ] as [number, number][],
+            ],
           },
         },
       ],
@@ -249,21 +252,21 @@ describe("useRouteSearch", () => {
 
   it("ローディング状態を正しく管理する", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute = {
-      type: "FeatureCollection" as const,
+    const mockRoute: RouteData = {
+      type: "FeatureCollection",
       features: [
         {
-          type: "Feature" as const,
+          type: "Feature",
           properties: {
             distance: 1000,
             duration: 300,
           },
           geometry: {
-            type: "LineString" as const,
+            type: "LineString",
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ] as [number, number][],
+            ],
           },
         },
       ],
