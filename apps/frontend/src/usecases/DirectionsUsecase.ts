@@ -1,6 +1,6 @@
 import { decode as decodePolyline } from "@mapbox/polyline";
-import type { Location } from "@/types/location";
 import { BACKEND_API_URL } from "@/pages/const";
+import type { Location } from "@/types/location";
 
 /**
  * 経路検索ユースケース

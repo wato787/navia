@@ -5,25 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import { SuggestionsList } from "..";
 
-type UseSearchAutocomplete =
-  typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
-
-type UseSearchAutocompleteReturn = {
-  data: AutocompleteSuggestion[] | null;
-  isLoading: boolean;
-};
-
-const mockUseSearchAutocomplete = vi.hoisted(() => {
-  const fn = vi.fn() as unknown as UseSearchAutocomplete & {
-    mockReturnValue: (value: UseSearchAutocompleteReturn) => void;
-  };
-  return fn;
-});
-
 vi.mock(
   "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete",
   () => ({
-    useSearchAutocomplete: mockUseSearchAutocomplete,
+    useSearchAutocomplete: vi.fn(),
   }),
 );
 
@@ -41,6 +26,22 @@ const createSuggestion = (
 });
 
 describe("SuggestionsList", () => {
+  let mockUseSearchAutocomplete: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    const module = await import(
+      "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete"
+    );
+    mockUseSearchAutocomplete = module.useSearchAutocomplete as ReturnType<
+      typeof vi.fn
+    >;
+    mockUseSearchAutocomplete.mockReturnValue({
+      data: null,
+      isLoading: false,
+    });
+  });
+
   const renderComponent = (
     props: Partial<ComponentProps<typeof SuggestionsList>> = {},
   ) => {
@@ -54,14 +55,6 @@ describe("SuggestionsList", () => {
     );
     return { onSuggestionClick };
   };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseSearchAutocomplete.mockReturnValue({
-      data: null,
-      isLoading: false,
-    });
-  });
 
   it("空白文字のみのクエリでは何も表示されない", () => {
     const { container } = render(
@@ -86,7 +79,10 @@ describe("SuggestionsList", () => {
   });
 
   it("ローディング中は「検索中...」が表示される", () => {
-    mockUseSearchAutocomplete.mockReturnValue({ data: null, isLoading: true });
+    mockUseSearchAutocomplete.mockReturnValue({
+      data: null,
+      isLoading: true,
+    });
 
     renderComponent({ query: "Tokyo" });
 
@@ -117,7 +113,10 @@ describe("SuggestionsList", () => {
   });
 
   it("候補がない場合は「候補が見つかりませんでした」が表示される", () => {
-    mockUseSearchAutocomplete.mockReturnValue({ data: [], isLoading: false });
+    mockUseSearchAutocomplete.mockReturnValue({
+      data: [],
+      isLoading: false,
+    });
 
     renderComponent({ query: "Tokyo" });
 

@@ -1,5 +1,5 @@
-import type { Location } from "@/types/location";
 import { BACKEND_API_URL } from "@/pages/const";
+import type { Location } from "@/types/location";
 
 /**
  * ジオコーディングユースケース

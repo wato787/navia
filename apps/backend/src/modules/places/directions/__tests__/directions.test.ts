@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import directions from "../index";
 
-// ??fetch???
+// 元のfetchを保存
 const originalFetch = global.fetch;
 
-// fetch????????????????Bun?fetch??????
+// fetchをモックするためのヘルパー関数（Bunのfetch型に合わせる）
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
-  // biome-ignore lint/suspicious/noExplicitAny: fetch?preconnect????????
+  // biome-ignore lint/suspicious/noExplicitAny: fetchのpreconnectプロパティにアクセスするため
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
 
 beforeEach(() => {
-  // ??????fetch?????
+  // 各テスト前にfetchをリセット
   global.fetch = originalFetch;
 });
 
 afterEach(() => {
-  // ??????fetch???
+  // 各テスト後にfetchをリセット
   global.fetch = originalFetch;
 });
 
@@ -35,36 +35,36 @@ describe("Directions API - GET /", () => {
     );
   });
 
-  describe("???????", () => {
-    test("originLat???", async () => {
+  describe("バリデーション", () => {
+    test("originLatが欠落している場合", async () => {
       const res = await app.request("/?originLng=139&destLat=35&destLng=139");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("originLng???", async () => {
+    test("originLngが欠落している場合", async () => {
       const res = await app.request("/?originLat=35&destLat=35&destLng=139");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("destLat???", async () => {
+    test("destLatが欠落している場合", async () => {
       const res = await app.request("/?originLat=35&originLng=139&destLng=139");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("destLng???", async () => {
+    test("destLngが欠落している場合", async () => {
       const res = await app.request("/?originLat=35&originLng=139&destLat=35");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("originLat????", async () => {
+    test("originLatが範囲外の場合", async () => {
       const res = await app.request(
         "/?originLat=91&originLng=139&destLat=35&destLng=139",
       );
@@ -73,7 +73,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("originLng????", async () => {
+    test("originLngが範囲外の場合", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=181&destLat=35&destLng=139",
       );
@@ -82,7 +82,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("destLat????", async () => {
+    test("destLatが範囲外の場合", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=91&destLng=139",
       );
@@ -91,7 +91,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("destLng????", async () => {
+    test("destLngが範囲外の場合", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=35&destLng=181",
       );
@@ -100,7 +100,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("mode???", async () => {
+    test("modeが無効な場合", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=35&destLng=139&mode=flying",
       );
@@ -110,8 +110,8 @@ describe("Directions API - GET /", () => {
     });
   });
 
-  describe("???", () => {
-    test("????????????", async () => {
+  describe("成功", () => {
+    test("正常に経路を取得できる", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -124,7 +124,7 @@ describe("Directions API - GET /", () => {
                 },
                 duration: {
                   value: 600,
-                  text: "10?",
+                  text: "10分",
                 },
               },
             ],
@@ -153,10 +153,10 @@ describe("Directions API - GET /", () => {
       expect(body.data).toBeDefined();
       expect(body.data.polyline).toBe("encoded_polyline_string");
       expect(body.data.distance).toBe("5 km");
-      expect(body.data.duration).toBe("10?");
+      expect(body.data.duration).toBe("10分");
     });
 
-    test("mode??????walking???", async () => {
+    test("modeがwalkingの場合、walkingモードで経路を取得できる", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -169,7 +169,7 @@ describe("Directions API - GET /", () => {
                 },
                 duration: {
                   value: 2400,
-                  text: "40?",
+                  text: "40分",
                 },
               },
             ],
@@ -196,15 +196,15 @@ describe("Directions API - GET /", () => {
       );
       expect(res.status).toBe(200);
 
-      // URL?mode=walking??????????
+      // URLにmode=walkingが含まれていることを確認
       expect(capturedUrl).toContain("mode=walking");
 
       const body = await res.json();
       expect(body.data).toBeDefined();
-      expect(body.data.duration).toBe("40?");
+      expect(body.data.duration).toBe("40分");
     });
 
-    test("??????mode?driving", async () => {
+    test("デフォルトでmodeがdrivingになる", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -236,11 +236,11 @@ describe("Directions API - GET /", () => {
       );
       expect(res.status).toBe(200);
 
-      // ??????mode=driving???????????
+      // デフォルトでmode=drivingが含まれていることを確認
       expect(capturedUrl).toContain("mode=driving");
     });
 
-    test("alternatives??????true???", async () => {
+    test("alternativesがtrueの場合、代替経路を取得する", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -272,13 +272,13 @@ describe("Directions API - GET /", () => {
       );
       expect(res.status).toBe(200);
 
-      // alternatives=true?URL??????????
+      // alternatives=trueがURLに含まれていることを確認
       expect(capturedUrl).toContain("alternatives=true");
     });
   });
 
-  describe("??????", () => {
-    test("Google Directions API???????", async () => {
+  describe("エラー", () => {
+    test("Google Directions APIがエラーを返す場合", async () => {
       const mockResponse = {
         status: "ZERO_RESULTS",
       };
@@ -302,7 +302,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toContain("Google Directions API error");
     });
 
-    test("routes?????", async () => {
+    test("routesが空の場合", async () => {
       const mockResponse = {
         status: "OK",
         routes: [],
@@ -327,7 +327,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toBe("No routes found");
     });
 
-    test("??????????", async () => {
+    test("ネットワークエラーが発生した場合", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
@@ -344,7 +344,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toBe("Failed to get directions");
     });
 
-    test("???JSON???", async () => {
+    test("無効なJSONが返される場合", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {

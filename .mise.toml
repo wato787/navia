@@ -43,6 +43,13 @@ run = [
   "bunx tsc --noEmit --project apps/frontend/tsconfig.json"
 ]
 
+[tasks.test]
+description = "Run all tests (frontend and backend)"
+run = [
+  "bun run --cwd apps/backend test",
+  "bun run --cwd apps/frontend test"
+]
+
 [tasks.frontend_test]
 description = "Run tests for frontend"
 run = "bun run --cwd apps/frontend test"

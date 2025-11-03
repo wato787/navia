@@ -4,25 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import { SearchRoute } from "..";
 
-type UseSearchAutocomplete =
-  typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
-
-type UseSearchAutocompleteReturn = {
-  data: AutocompleteSuggestion[] | null;
-  isLoading: boolean;
-};
-
-const mockUseSearchAutocomplete = vi.hoisted(() => {
-  const fn = vi.fn() as unknown as UseSearchAutocomplete & {
-    mockReturnValue: (value: UseSearchAutocompleteReturn) => void;
-  };
-  return fn;
-});
-
 vi.mock(
   "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete",
   () => ({
-    useSearchAutocomplete: mockUseSearchAutocomplete,
+    useSearchAutocomplete: vi.fn(),
   }),
 );
 
@@ -39,8 +24,16 @@ const createSuggestion = (overrides: Partial<AutocompleteSuggestion> = {}) =>
   }) satisfies AutocompleteSuggestion;
 
 describe("SearchRoute", () => {
-  beforeEach(() => {
+  let mockUseSearchAutocomplete: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
+    const module = await import(
+      "@/components/SearchRoute/SuggestionsList/useSearchAutocomplete"
+    );
+    mockUseSearchAutocomplete = module.useSearchAutocomplete as ReturnType<
+      typeof vi.fn
+    >;
     mockUseSearchAutocomplete.mockReturnValue({ data: [], isLoading: false });
   });
 
