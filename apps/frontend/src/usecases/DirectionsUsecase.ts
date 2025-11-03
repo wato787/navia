@@ -3,17 +3,17 @@ import type { Location } from "@/types/location";
 import { BACKEND_API_URL } from "@/pages/const";
 
 /**
- * ??????????
- * ?????????????????????
+ * 経路検索ユースケース
+ * 出発地と目的地から経路を取得する機能を提供
  */
 
 /**
- * ????????
+ * 移動手段の型定義
  */
 export type TravelMode = "driving" | "walking" | "bicycling" | "transit";
 
 /**
- * ??????????
+ * 経路検索のパラメータ
  */
 export interface DirectionsParams {
   origin: Location;
@@ -23,7 +23,7 @@ export interface DirectionsParams {
 }
 
 /**
- * ??????????GeoJSON???
+ * 経路データの型定義（GeoJSON形式）
  */
 export interface RouteData extends GeoJSON.FeatureCollection {
   features: Array<{
@@ -40,7 +40,7 @@ export interface RouteData extends GeoJSON.FeatureCollection {
 }
 
 /**
- * ??????API???????
+ * バックエンドAPIのレスポンス型
  */
 interface DirectionsResponse {
   data: {
@@ -51,14 +51,14 @@ interface DirectionsResponse {
 }
 
 /**
- * ??????????
+ * 経路検索ユースケース
  */
 export const DirectionsUsecase = {
   /**
-   * ?????
-   * @param params ?????????
-   * @returns ??????GeoJSON???
-   * @throws ????????????
+   * 経路を取得
+   * @param params 経路検索パラメータ
+   * @returns 経路データ（GeoJSON形式）
+   * @throws 経路の取得に失敗した場合
    */
   async getRoute(params: DirectionsParams): Promise<RouteData> {
     const { origin, destination, mode = "driving", alternatives = false } = params;
@@ -79,21 +79,21 @@ export const DirectionsUsecase = {
     if (!response.ok) {
       const error = await response.json();
       console.error("Directions API error:", error);
-      throw new Error(`????????????: ${response.statusText}`);
+      throw new Error(`経路の取得に失敗しました: ${response.statusText}`);
     }
 
     const result: DirectionsResponse = await response.json();
 
     if (!result.data?.polyline) {
-      throw new Error("????????????????");
+      throw new Error("経路データが見つかりませんでした");
     }
 
-    // ????????????GeoJSON?????
+    // ポリラインをデコードしてGeoJSON形式に変換
     const polyline = result.data.polyline;
-    // @mapbox/polyline?decode?[lat, lng]????????GeoJSON??[lng, lat]???
+    // @mapbox/polylineのdecodeは[lat, lng]の順序で返すが、GeoJSONでは[lng, lat]が必要
     const decodedCoordinates = decodePolyline(polyline);
     const coordinates: Array<[number, number]> = decodedCoordinates.map(
-      (coord) => [coord[1], coord[0]], // [lng, lat]???
+      (coord) => [coord[1], coord[0]], // [lng, lat]に変換
     );
 
     return {
