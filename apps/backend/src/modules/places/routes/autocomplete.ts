@@ -175,16 +175,19 @@ autocomplete.get("/", validateQuery(AutocompleteQuerySchema), async (c) => {
     const data = (await response.json()) as AutocompleteResponse;
 
     if (data.suggestions && Array.isArray(data.suggestions)) {
-      const predictions: GooglePlacesAutocompletePrediction[] =
-        data.suggestions.map((suggestion) => ({
+      const predictions: GooglePlacesAutocompletePrediction[] = data.suggestions
+        .filter((suggestion) => suggestion.placePrediction)
+        .map((suggestion) => ({
           placeId: suggestion.placePrediction.placeId,
-          description: suggestion.placePrediction.text.text,
+          description: suggestion.placePrediction.text?.text ?? "",
           structuredFormatting: {
-            mainText: suggestion.placePrediction.structuredFormat.mainText.text,
+            mainText:
+              suggestion.placePrediction.structuredFormat?.mainText?.text ?? "",
             secondaryText:
-              suggestion.placePrediction.structuredFormat.secondaryText.text,
+              suggestion.placePrediction.structuredFormat?.secondaryText
+                ?.text ?? "",
           },
-          types: suggestion.placePrediction.types,
+          types: suggestion.placePrediction.types ?? [],
         }));
 
       return ok(c, predictions);

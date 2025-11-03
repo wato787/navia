@@ -1,4 +1,4 @@
-import { describe, test, expect, mock, beforeEach } from "bun:test";
+import { describe, test, expect, mock, beforeEach, afterEach } from "bun:test";
 import { Hono } from "hono";
 import autocomplete from "./autocomplete";
 
@@ -14,6 +14,11 @@ const mockFetch = (mockFn: ReturnType<typeof mock>) => {
 
 beforeEach(() => {
   // ???????fetch?????
+  global.fetch = originalFetch;
+});
+
+afterEach(() => {
+  // 各テストの後にfetchを確実に復元
   global.fetch = originalFetch;
 });
 
