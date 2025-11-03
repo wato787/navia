@@ -4,7 +4,7 @@ import type { Location } from "@/types/location";
 
 // fetch????
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch as typeof fetch;
 
 describe("GeocodeUsecase", () => {
   beforeEach(() => {
