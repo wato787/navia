@@ -2,14 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
+import type { AutocompleteSuggestion } from "@/usecases/autocomplete";
 import { SuggestionsList } from "..";
 
 type UseSearchAutocomplete =
   typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
 
 type UseSearchAutocompleteReturn = {
-  data: GooglePlacesAutocompletePrediction[] | null;
+  data: AutocompleteSuggestion[] | null;
   isLoading: boolean;
 };
 
@@ -28,8 +28,8 @@ vi.mock(
 );
 
 const createSuggestion = (
-  overrides: Partial<GooglePlacesAutocompletePrediction> = {},
-): GooglePlacesAutocompletePrediction => ({
+  overrides: Partial<AutocompleteSuggestion> = {},
+): AutocompleteSuggestion => ({
   placeId: "suggestion-1",
   description: "Default Place",
   structuredFormatting: {

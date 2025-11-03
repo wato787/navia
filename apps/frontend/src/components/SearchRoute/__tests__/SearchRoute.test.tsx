@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
+import type { AutocompleteSuggestion } from "@/usecases/autocomplete";
 import { SearchRoute } from "..";
 
 type UseSearchAutocomplete =
   typeof import("@/components/SearchRoute/SuggestionsList/useSearchAutocomplete").useSearchAutocomplete;
 
 type UseSearchAutocompleteReturn = {
-  data: GooglePlacesAutocompletePrediction[] | null;
+  data: AutocompleteSuggestion[] | null;
   isLoading: boolean;
 };
 
@@ -27,7 +27,7 @@ vi.mock(
 );
 
 const createSuggestion = (
-  overrides: Partial<GooglePlacesAutocompletePrediction> = {},
+  overrides: Partial<AutocompleteSuggestion> = {},
 ) =>
   ({
     placeId: "route-suggestion-1",
@@ -38,7 +38,7 @@ const createSuggestion = (
     },
     types: ["establishment"],
     ...overrides,
-  }) satisfies GooglePlacesAutocompletePrediction;
+  }) satisfies AutocompleteSuggestion;
 
 describe("SearchRoute", () => {
   beforeEach(() => {

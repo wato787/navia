@@ -1,54 +1,55 @@
-import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { geocodeAddress, getRoute } from "@/lib/google-places";
+import { useGeocode } from "@/usecases/geocode";
+import { useDirections } from "@/usecases/directions";
 import type { Location } from "@/types/location";
 import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
 
-type RouteSearchParams = {
-  destination: string;
-  currentLocation: Location | null;
-};
-
 /**
  * 目的地検索と経路表示を管理するフック
+ * ユースケース層（useGeocode, useDirections）を組み合わせて使用
  */
 export function useRouteSearch(
   mapRef: React.RefObject<MapRef | null>,
   currentLocation: Location | null,
 ) {
   const { displayRoute } = useRouteDisplay(mapRef);
+  const geocodeMutation = useGeocode();
+  const directionsMutation = useDirections();
 
-  const mutation = useMutation({
-    mutationFn: async ({ destination }: RouteSearchParams) => {
-      // 目的地を座標に変換
-      const destinationCoords = await geocodeAddress(destination);
-      if (!destinationCoords) {
-        throw new Error("目的地が見つかりませんでした");
-      }
+  const searchRoute = async (destination: string) => {
+    try {
+      // 1. 目的地を座標に変換（ジオコーディングユースケース）
+      const destinationCoords = await geocodeMutation.mutateAsync({
+        address: destination,
+      });
 
-      // 現在地が取得できていない場合は、初期位置を使用
+      // 2. 現在地が取得できていない場合は、初期位置を使用
       const startCoords = currentLocation || {
         lat: INITIAL_VIEW_STATE.latitude,
         lng: INITIAL_VIEW_STATE.longitude,
       };
 
-      // 経路を取得
-      const route = await getRoute(startCoords, destinationCoords);
-      if (!route) {
-        throw new Error("経路を取得できませんでした");
-      }
+      // 3. 経路を取得（経路検索ユースケース）
+      const route = await directionsMutation.mutateAsync({
+        origin: startCoords,
+        destination: destinationCoords,
+        mode: "driving",
+      });
 
-      return route;
-    },
-    onSuccess: async (route) => {
-      // 経路を地図上に表示
+      // 4. 経路を地図上に表示
       await displayRoute(route);
-    },
-    onError: (error: Error) => {
-      alert(error.message || "エラーが発生しました");
-    },
-  });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "エラーが発生しました";
+      alert(errorMessage);
+      throw error;
+    }
+  };
 
-  return mutation;
+  return {
+    searchRoute,
+    isLoading: geocodeMutation.isPending || directionsMutation.isPending,
+    error: geocodeMutation.error || directionsMutation.error,
+  };
 }
