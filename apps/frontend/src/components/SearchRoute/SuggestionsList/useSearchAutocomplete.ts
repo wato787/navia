@@ -1,10 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useAutocomplete } from "@/usecases/autocomplete";
+import {
+  AutocompleteUsecase,
+  type AutocompleteSuggestion,
+} from "@/usecases/autocomplete";
 import type { Location } from "@/types/location";
 
 /**
  * Debounce付きのオートコンプリートフック
- * ユースケース層のuseAutocompleteをラップして、UIロジック（debounce）を追加
+ * ユースケース層のAutocompleteUsecaseをReact Queryでラップし、UIロジック（debounce）を追加
  */
 export function useSearchAutocomplete(
   query: string,
@@ -16,5 +20,19 @@ export function useSearchAutocomplete(
   const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
-  return useAutocomplete(debouncedQuery, options);
+  return useQuery<AutocompleteSuggestion[]>({
+    queryKey: ["autocomplete", debouncedQuery, options?.proximity, options?.limit],
+    queryFn: async () => {
+      if (!debouncedQuery.trim()) {
+        return [];
+      }
+      return await AutocompleteUsecase.fetchSuggestions({
+        query: debouncedQuery,
+        proximity: options?.proximity,
+        limit: options?.limit,
+      });
+    },
+    enabled: debouncedQuery.trim().length > 0,
+    staleTime: 1000 * 60 * 5, // 5分間キャッシュ
+  });
 }

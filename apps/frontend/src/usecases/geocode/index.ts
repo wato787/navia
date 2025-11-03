@@ -1,1 +1,1 @@
-export { useGeocode } from "./useGeocode";
+export { GeocodeUsecase, type GeocodeParams } from "./GeocodeUsecase";

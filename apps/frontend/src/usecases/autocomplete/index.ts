@@ -1,1 +1,5 @@
-export { useAutocomplete, type AutocompleteSuggestion } from "./useAutocomplete";
+export {
+  AutocompleteUsecase,
+  type AutocompleteSuggestion,
+  type AutocompleteParams,
+} from "./AutocompleteUsecase";

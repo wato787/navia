@@ -1,26 +1,30 @@
+import { useState } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
-import { useGeocode } from "@/usecases/geocode";
-import { useDirections } from "@/usecases/directions";
+import { GeocodeUsecase } from "@/usecases/geocode";
+import { DirectionsUsecase } from "@/usecases/directions";
 import type { Location } from "@/types/location";
 import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
 
 /**
  * 目的地検索と経路表示を管理するフック
- * ユースケース層（useGeocode, useDirections）を組み合わせて使用
+ * ユースケース層（GeocodeUsecase, DirectionsUsecase）を組み合わせて使用
  */
 export function useRouteSearch(
   mapRef: React.RefObject<MapRef | null>,
   currentLocation: Location | null,
 ) {
   const { displayRoute } = useRouteDisplay(mapRef);
-  const geocodeMutation = useGeocode();
-  const directionsMutation = useDirections();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const searchRoute = async (destination: string) => {
+    setIsLoading(true);
+    setError(null);
+
     try {
       // 1. 目的地を座標に変換（ジオコーディングユースケース）
-      const destinationCoords = await geocodeMutation.mutateAsync({
+      const destinationCoords = await GeocodeUsecase.geocode({
         address: destination,
       });
 
@@ -31,7 +35,7 @@ export function useRouteSearch(
       };
 
       // 3. 経路を取得（経路検索ユースケース）
-      const route = await directionsMutation.mutateAsync({
+      const route = await DirectionsUsecase.getRoute({
         origin: startCoords,
         destination: destinationCoords,
         mode: "driving",
@@ -42,14 +46,17 @@ export function useRouteSearch(
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "エラーが発生しました";
+      setError(error instanceof Error ? error : new Error(errorMessage));
       alert(errorMessage);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     searchRoute,
-    isLoading: geocodeMutation.isPending || directionsMutation.isPending,
-    error: geocodeMutation.error || directionsMutation.error,
+    isLoading,
+    error,
   };
 }

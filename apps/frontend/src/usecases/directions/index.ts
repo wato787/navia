@@ -1,5 +1,6 @@
 export {
-  useDirections,
+  DirectionsUsecase,
+  type DirectionsParams,
   type TravelMode,
   type RouteData,
-} from "./useDirections";
+} from "./DirectionsUsecase";
