@@ -1,25 +1,25 @@
 import { Hono } from "hono";
 import { z } from "zod";
 
-import { ENV } from "../../config/env";
-import { validateQuery } from "../../plugins/validator";
-import type { AppBindings } from "../../types/app";
-import { ok } from "../../utils/response";
+import { ENV } from "../../../config/env";
+import { validateQuery } from "../../../plugins/validator";
+import type { AppBindings } from "../../../types/app";
+import { ok } from "../../../utils/response";
 
-const places = new Hono<AppBindings>();
+const autocomplete = new Hono<AppBindings>();
 
 /**
- * Google Places API Autocomplete ????????
+ * Google Places API Autocomplete ???????
  */
 const AutocompleteQuerySchema = z.object({
-  input: z.string().min(1, "??????????"),
+  input: z.string().min(1, "???????"),
   latitude: z
     .string()
     .optional()
     .transform((val) => (val ? Number(val) : undefined))
     .refine(
       (val) => val === undefined || (Number.isFinite(val) && val >= -90 && val <= 90),
-      { message: "??????-90??90?????????????" },
+      { message: "???-90??90????????????" },
     ),
   longitude: z
     .string()
@@ -27,14 +27,14 @@ const AutocompleteQuerySchema = z.object({
     .transform((val) => (val ? Number(val) : undefined))
     .refine(
       (val) => val === undefined || (Number.isFinite(val) && val >= -180 && val <= 180),
-      { message: "??????-180??180?????????????" },
+      { message: "???-180??180????????????" },
     ),
   radius: z
     .string()
     .default("50000")
     .transform((val) => Number(val))
     .refine((val) => Number.isFinite(val) && val >= 0 && val <= 50000, {
-      message: "?????0??50000?????????????",
+      message: "???0??50000????????????",
     }),
   limit: z
     .string()
@@ -42,12 +42,12 @@ const AutocompleteQuerySchema = z.object({
     .transform((val) => Number(val))
     .refine(
       (val) => Number.isFinite(val) && Number.isInteger(val) && val >= 1 && val <= 5,
-      { message: "????1??5?????????" },
+      { message: "???1??5????????????" },
     ),
 });
 
 /**
- * Google Places API Autocomplete ???????
+ * Google Places API Autocomplete ??????
  */
 type AutocompleteResponse = {
   suggestions: Array<{
@@ -82,7 +82,7 @@ type AutocompleteResponse = {
 }
 
 /**
- * Google Places API Autocomplete ???????
+ * Google Places API Autocomplete ?????
  */
 type GooglePlacesAutocompletePrediction = {
   placeId: string;
@@ -95,7 +95,7 @@ type GooglePlacesAutocompletePrediction = {
 }
 
 /**
- * Google Places API Autocomplete ???????
+ * Google Places API Autocomplete ??????
  */
 type AutocompleteRequest = {
   input: string;
@@ -114,11 +114,11 @@ type AutocompleteRequest = {
 }
 
 /**
- * GET /api/places/autocomplete
- * Google Places API Autocomplete ??????????
+ * GET /autocomplete
+ * Google Places API Autocomplete ????????????
  */
-places.get(
-  "/autocomplete",
+autocomplete.get(
+  "/",
   validateQuery(AutocompleteQuerySchema),
   async (c) => {
     const { input, latitude, longitude, radius, limit } =
@@ -127,12 +127,12 @@ places.get(
     try {
       const request: AutocompleteRequest = {
         input,
-        includedRegionCodes: ["JP"], // ?????
+        includedRegionCodes: ["JP"], // ????
         languageCode: "ja",
         maxResultCount: limit,
       };
 
-      // latitude ? longitude ????????????? locationBias ???
+      // latitude ? longitude ??????????? locationBias ???
       if (latitude !== undefined && longitude !== undefined) {
         request.locationBias = {
           circle: {
@@ -205,4 +205,4 @@ places.get(
   },
 );
 
-export default places;
+export default autocomplete;
