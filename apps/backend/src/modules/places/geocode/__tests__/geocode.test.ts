@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import geocode from "../index";
 
-// ???fetch???
+// ??fetch???
 const originalFetch = global.fetch;
 
-// fetch????Bun?fetch???????????
+// fetch????????????????Bun?fetch??????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
-  // biome-ignore lint/suspicious/noExplicitAny: ??????????
+  // biome-ignore lint/suspicious/noExplicitAny: fetch?preconnect????????
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
 
 beforeEach(() => {
-  // ???????fetch?????
+  // ??????fetch?????
   global.fetch = originalFetch;
 });
 
 afterEach(() => {
-  // ???????fetch??????
+  // ??????fetch???
   global.fetch = originalFetch;
 });
 
@@ -36,14 +36,14 @@ describe("Geocode API - GET /", () => {
   });
 
   describe("???????", () => {
-    test("address???????", async () => {
+    test("address??????", async () => {
       const res = await app.request("/");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("address?????????", async () => {
+    test("address????????", async () => {
       const res = await app.request("/?address=");
       expect(res.status).toBe(500);
       const body = await res.json();
@@ -52,7 +52,7 @@ describe("Geocode API - GET /", () => {
   });
 
   describe("???", () => {
-    test("????????????", async () => {
+    test("?????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -76,7 +76,7 @@ describe("Geocode API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?address=?????");
+      const res = await app.request("/?address=???????");
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -114,13 +114,13 @@ describe("Geocode API - GET /", () => {
       const res = await app.request("/?address=???");
       expect(res.status).toBe(200);
 
-      // URL???????????????????
+      // URL???????????????????????????
       expect(capturedUrl).toContain(encodeURIComponent("???"));
       expect(capturedUrl).toContain("region=JP");
       expect(capturedUrl).toContain("language=ja");
     });
 
-    test("?????????????????????", async () => {
+    test("???????????????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -161,7 +161,7 @@ describe("Geocode API - GET /", () => {
       expect(body.data.lng).toBe(139.7014);
     });
 
-    test("???????????", async () => {
+    test("??????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -195,7 +195,7 @@ describe("Geocode API - GET /", () => {
     });
   });
 
-  describe("?????????", () => {
+  describe("??????", () => {
     test("Google Geocoding API?ZERO_RESULTS???", async () => {
       const mockResponse = {
         status: "ZERO_RESULTS",
@@ -218,7 +218,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toContain("Google Geocoding API error");
     });
 
-    test("results????", async () => {
+    test("results?????", async () => {
       const mockResponse = {
         status: "OK",
         results: [],
@@ -241,7 +241,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toBe("No results found");
     });
 
-    test("????????????", async () => {
+    test("??????????", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
@@ -256,7 +256,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toBe("Failed to geocode address");
     });
 
-    test("???JSON?????", async () => {
+    test("???JSON???", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {

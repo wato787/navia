@@ -30,7 +30,7 @@ jobs:
 
       - name: Run unit tests with coverage
         working-directory: apps/backend
-        run: bun run test:coverage
+        run: bun test --coverage --coverage-reporter=lcov
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

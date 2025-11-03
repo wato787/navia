@@ -30,10 +30,12 @@ export default defineConfig({
       reporter: ["text", "json", "html", "lcov"],
       exclude: [
         "node_modules/",
-        "src/test/",
+        "**/__tests__/**",
         "**/*.test.tsx",
         "**/*.test.ts",
+        "**/test/**",
         "**/vite.config.ts",
+        "**/vitest.config.ts",
         "**/tailwind.config.js",
         "**/postcss.config.js",
         "src/routeTree.gen.ts",
