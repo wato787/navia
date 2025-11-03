@@ -1,0 +1,39 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+
+  # ???????????????????????
+  flags:
+    frontend:
+      paths:
+        - apps/frontend/src/
+      carryforward: true
+    backend:
+      paths:
+        - apps/backend/src/
+      carryforward: true
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+# ??????????
+ignore:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/test/**"
+  - "**/vite.config.ts"
+  - "**/vitest.config.ts"

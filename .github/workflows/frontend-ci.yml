@@ -28,9 +28,18 @@ jobs:
         working-directory: apps/frontend
         run: bun run typecheck
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         working-directory: apps/frontend
-        run: bun run test
+        run: bun run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./apps/frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+          fail_ci_if_error: false
 
       - name: Build frontend
         working-directory: apps/frontend

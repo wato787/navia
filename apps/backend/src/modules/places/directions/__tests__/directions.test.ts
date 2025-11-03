@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import directions from "../index";
 
-// ???fetch???
+// ??fetch???
 const originalFetch = global.fetch;
 
-// fetch????Bun?fetch???????????
+// fetch????????????????Bun?fetch??????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
-  // biome-ignore lint/suspicious/noExplicitAny: ??????????
+  // biome-ignore lint/suspicious/noExplicitAny: fetch?preconnect????????
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
 
 beforeEach(() => {
-  // ???????fetch?????
+  // ??????fetch?????
   global.fetch = originalFetch;
 });
 
 afterEach(() => {
-  // ???????fetch??????
+  // ??????fetch???
   global.fetch = originalFetch;
 });
 
@@ -64,7 +64,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("originLat???????", async () => {
+    test("originLat????", async () => {
       const res = await app.request(
         "/?originLat=91&originLng=139&destLat=35&destLng=139",
       );
@@ -73,7 +73,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("originLng???????", async () => {
+    test("originLng????", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=181&destLat=35&destLng=139",
       );
@@ -82,7 +82,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("destLat???????", async () => {
+    test("destLat????", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=91&destLng=139",
       );
@@ -91,7 +91,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("destLng???????", async () => {
+    test("destLng????", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=35&destLng=181",
       );
@@ -100,7 +100,7 @@ describe("Directions API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("mode?????", async () => {
+    test("mode???", async () => {
       const res = await app.request(
         "/?originLat=35&originLng=139&destLat=35&destLng=139&mode=flying",
       );
@@ -111,7 +111,7 @@ describe("Directions API - GET /", () => {
   });
 
   describe("???", () => {
-    test("?????????????", async () => {
+    test("????????????", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -156,7 +156,7 @@ describe("Directions API - GET /", () => {
       expect(body.data.duration).toBe("10?");
     });
 
-    test("mode??????walking??", async () => {
+    test("mode??????walking???", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -204,7 +204,7 @@ describe("Directions API - GET /", () => {
       expect(body.data.duration).toBe("40?");
     });
 
-    test("?????mode?driving", async () => {
+    test("??????mode?driving", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -236,11 +236,11 @@ describe("Directions API - GET /", () => {
       );
       expect(res.status).toBe(200);
 
-      // ?????mode=driving??????????
+      // ??????mode=driving???????????
       expect(capturedUrl).toContain("mode=driving");
     });
 
-    test("alternatives????true???", async () => {
+    test("alternatives??????true???", async () => {
       const mockResponse = {
         status: "OK",
         routes: [
@@ -277,7 +277,7 @@ describe("Directions API - GET /", () => {
     });
   });
 
-  describe("?????????", () => {
+  describe("??????", () => {
     test("Google Directions API???????", async () => {
       const mockResponse = {
         status: "ZERO_RESULTS",
@@ -302,7 +302,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toContain("Google Directions API error");
     });
 
-    test("routes????", async () => {
+    test("routes?????", async () => {
       const mockResponse = {
         status: "OK",
         routes: [],
@@ -327,7 +327,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toBe("No routes found");
     });
 
-    test("????????????", async () => {
+    test("??????????", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
@@ -344,7 +344,7 @@ describe("Directions API - GET /", () => {
       expect(body.error.message).toBe("Failed to get directions");
     });
 
-    test("???JSON?????", async () => {
+    test("???JSON???", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {

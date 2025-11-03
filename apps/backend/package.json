@@ -7,7 +7,8 @@
     "dev": "bun run --watch src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "bun run dist/index.js",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage --coverage-reporter=lcov"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.4",
