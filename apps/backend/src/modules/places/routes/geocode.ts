@@ -28,63 +28,59 @@ type GeocodeResponse = {
       };
     };
   }>;
-}
+};
 
 /**
  * GET /geocode
  * Google Geocoding API ????????????
  */
-geocode.get(
-  "/",
-  validateQuery(GeocodeQuerySchema),
-  async (c) => {
-    const { address } = c.req.valid("query");
+geocode.get("/", validateQuery(GeocodeQuerySchema), async (c) => {
+  const { address } = c.req.valid("query");
 
-    try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja`;
-      const response = await fetch(url);
-      const data = (await response.json()) as GeocodeResponse;
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja`;
+    const response = await fetch(url);
+    const data = (await response.json()) as GeocodeResponse;
 
-      if (data.status !== "OK") {
-        console.error("Google Geocoding API error:", data.status);
-        return c.json(
-          {
-            error: {
-              message: `Google Geocoding API error: ${data.status}`,
-            },
-          },
-          500,
-        );
-      }
-
-      if (data.results && data.results.length > 0) {
-        const location = data.results[0].geometry.location;
-        return ok(c, {
-          lat: location.lat,
-          lng: location.lng,
-        });
-      }
-
+    if (data.status !== "OK") {
+      console.error("Google Geocoding API error:", data.status);
       return c.json(
         {
           error: {
-            message: "No results found",
-          },
-        },
-        404,
-      );
-    } catch (error) {
-      console.error("Google Geocoding error:", error);
-      return c.json(
-        {
-          error: {
-            message: "Failed to geocode address",
+            message: `Google Geocoding API error: ${data.status}`,
           },
         },
         500,
       );
     }
-  },
-);
+
+    if (data.results && data.results.length > 0) {
+      const location = data.results[0].geometry.location;
+      return ok(c, {
+        lat: location.lat,
+        lng: location.lng,
+      });
+    }
+
+    return c.json(
+      {
+        error: {
+          message: "No results found",
+        },
+      },
+      404,
+    );
+  } catch (error) {
+    console.error("Google Geocoding error:", error);
+    return c.json(
+      {
+        error: {
+          message: "Failed to geocode address",
+        },
+      },
+      500,
+    );
+  }
+});
 
 export default geocode;

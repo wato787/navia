@@ -21,7 +21,7 @@ export type GooglePlacesAutocompletePrediction = {
     latitude: number;
     longitude: number;
   };
-}
+};
 
 /**
  * Google Places APIでautocomplete候補を取得（バックエンド経由）
