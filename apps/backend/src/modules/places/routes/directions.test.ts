@@ -5,6 +5,13 @@ import directions from "./directions";
 // ?????fetch????
 const originalFetch = global.fetch;
 
+// fetchモックをBunのfetch型に適合させるヘルパー
+const mockFetch = (mockFn: ReturnType<typeof mock>) => {
+  const wrapper = mockFn as unknown as typeof fetch;
+  wrapper.preconnect = (originalFetch as any).preconnect;
+  global.fetch = wrapper;
+};
+
 beforeEach(() => {
   // ???????fetch?????
   global.fetch = originalFetch;
@@ -122,12 +129,14 @@ describe("Directions API - GET /", () => {
         ],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -166,13 +175,15 @@ describe("Directions API - GET /", () => {
       };
 
       let capturedUrl: string = "";
-      global.fetch = mock(async (url) => {
-        capturedUrl = url.toString();
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url) => {
+          capturedUrl = url.toString();
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671&mode=walking",
@@ -204,13 +215,15 @@ describe("Directions API - GET /", () => {
       };
 
       let capturedUrl: string = "";
-      global.fetch = mock(async (url) => {
-        capturedUrl = url.toString();
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url) => {
+          capturedUrl = url.toString();
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -238,13 +251,15 @@ describe("Directions API - GET /", () => {
       };
 
       let capturedUrl: string = "";
-      global.fetch = mock(async (url) => {
-        capturedUrl = url.toString();
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url) => {
+          capturedUrl = url.toString();
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671&alternatives=true",
@@ -262,12 +277,14 @@ describe("Directions API - GET /", () => {
         status: "ZERO_RESULTS",
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -285,12 +302,14 @@ describe("Directions API - GET /", () => {
         routes: [],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -303,9 +322,11 @@ describe("Directions API - GET /", () => {
     });
 
     test("????????????????", async () => {
-      global.fetch = mock(async () => {
-        throw new Error("Network error");
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          throw new Error("Network error");
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -318,12 +339,14 @@ describe("Directions API - GET /", () => {
     });
 
     test("???JSON???????", async () => {
-      global.fetch = mock(async () => {
-        return new Response("Invalid JSON", {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response("Invalid JSON", {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",

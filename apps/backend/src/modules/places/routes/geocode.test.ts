@@ -5,6 +5,13 @@ import geocode from "./geocode";
 // ?????fetch????
 const originalFetch = global.fetch;
 
+// fetchモックをBunのfetch型に適合させるヘルパー
+const mockFetch = (mockFn: ReturnType<typeof mock>) => {
+  const wrapper = mockFn as unknown as typeof fetch;
+  wrapper.preconnect = (originalFetch as any).preconnect;
+  global.fetch = wrapper;
+};
+
 beforeEach(() => {
   // ???????fetch?????
   global.fetch = originalFetch;
@@ -54,12 +61,14 @@ describe("Geocode API - GET /", () => {
         ],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??????");
       expect(res.status).toBe(200);
@@ -86,13 +95,15 @@ describe("Geocode API - GET /", () => {
       };
 
       let capturedUrl: string = "";
-      global.fetch = mock(async (url) => {
-        capturedUrl = url.toString();
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url) => {
+          capturedUrl = url.toString();
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??????");
       expect(res.status).toBe(200);
@@ -126,12 +137,14 @@ describe("Geocode API - GET /", () => {
         ],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(200);
@@ -157,12 +170,14 @@ describe("Geocode API - GET /", () => {
         ],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=Tokyo Tower");
       expect(res.status).toBe(200);
@@ -180,12 +195,14 @@ describe("Geocode API - GET /", () => {
         status: "ZERO_RESULTS",
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=???????");
       expect(res.status).toBe(500);
@@ -201,12 +218,14 @@ describe("Geocode API - GET /", () => {
         results: [],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=test");
       expect(res.status).toBe(404);
@@ -217,9 +236,11 @@ describe("Geocode API - GET /", () => {
     });
 
     test("????????????????", async () => {
-      global.fetch = mock(async () => {
-        throw new Error("Network error");
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          throw new Error("Network error");
+        }),
+      );
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -230,12 +251,14 @@ describe("Geocode API - GET /", () => {
     });
 
     test("???JSON???????", async () => {
-      global.fetch = mock(async () => {
-        return new Response("Invalid JSON", {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response("Invalid JSON", {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -250,12 +273,14 @@ describe("Geocode API - GET /", () => {
         error_message: "API key is invalid",
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -270,12 +295,14 @@ describe("Geocode API - GET /", () => {
         status: "OVER_QUERY_LIMIT",
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);

@@ -5,6 +5,13 @@ import autocomplete from "./autocomplete";
 // ?????fetch????
 const originalFetch = global.fetch;
 
+// fetchモックをBunのfetch型に適合させるヘルパー
+const mockFetch = (mockFn: ReturnType<typeof mock>) => {
+  const wrapper = mockFn as unknown as typeof fetch;
+  wrapper.preconnect = (originalFetch as any).preconnect;
+  global.fetch = wrapper;
+};
+
 beforeEach(() => {
   // ???????fetch?????
   global.fetch = originalFetch;
@@ -100,12 +107,14 @@ describe("Autocomplete API - GET /", () => {
         ],
       };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(200);
@@ -152,15 +161,17 @@ describe("Autocomplete API - GET /", () => {
       };
 
       let capturedRequestBody: any = null;
-      global.fetch = mock(async (url, options) => {
-        if (options?.body) {
-          capturedRequestBody = JSON.parse(options.body as string);
-        }
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url, options) => {
+          if (options?.body) {
+            capturedRequestBody = JSON.parse(options.body as string);
+          }
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request(
         "/?input=??&latitude=35.6581&longitude=139.7014&radius=1000",
@@ -187,15 +198,17 @@ describe("Autocomplete API - GET /", () => {
       const mockResponse = { suggestions: [] };
 
       let capturedRequestBody: any = null;
-      global.fetch = mock(async (url, options) => {
-        if (options?.body) {
-          capturedRequestBody = JSON.parse(options.body as string);
-        }
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async (url, options) => {
+          if (options?.body) {
+            capturedRequestBody = JSON.parse(options.body as string);
+          }
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?input=???");
       expect(res.status).toBe(200);
@@ -209,12 +222,14 @@ describe("Autocomplete API - GET /", () => {
     test("?????????????????", async () => {
       const mockResponse = { suggestions: [] };
 
-      global.fetch = mock(async () => {
-        return new Response(JSON.stringify(mockResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response(JSON.stringify(mockResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?input=???????");
       expect(res.status).toBe(200);
@@ -228,21 +243,23 @@ describe("Autocomplete API - GET /", () => {
 
   describe("?????????", () => {
     test("Google Places API?????????", async () => {
-      global.fetch = mock(async () => {
-        return new Response(
-          JSON.stringify({
-            error: {
-              code: 400,
-              message: "Invalid request",
+      mockFetch(
+        mock(async () => {
+          return new Response(
+            JSON.stringify({
+              error: {
+                code: 400,
+                message: "Invalid request",
+              },
+            }),
+            {
+              status: 400,
+              statusText: "Bad Request",
+              headers: { "Content-Type": "application/json" },
             },
-          }),
-          {
-            status: 400,
-            statusText: "Bad Request",
-            headers: { "Content-Type": "application/json" },
-          },
-        );
-      }) as any;
+          );
+        }),
+      );
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);
@@ -253,9 +270,11 @@ describe("Autocomplete API - GET /", () => {
     });
 
     test("????????????????", async () => {
-      global.fetch = mock(async () => {
-        throw new Error("Network error");
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          throw new Error("Network error");
+        }),
+      );
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);
@@ -268,12 +287,14 @@ describe("Autocomplete API - GET /", () => {
     });
 
     test("Google Places API????JSON?????", async () => {
-      global.fetch = mock(async () => {
-        return new Response("Invalid JSON", {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }) as any;
+      mockFetch(
+        mock(async () => {
+          return new Response("Invalid JSON", {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }),
+      );
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);
