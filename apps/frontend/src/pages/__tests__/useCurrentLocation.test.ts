@@ -21,8 +21,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {
@@ -47,8 +49,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {
@@ -69,8 +73,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {
@@ -96,8 +102,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {
@@ -133,8 +141,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {
@@ -159,8 +169,10 @@ describe("useCurrentLocation", () => {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
+        toJSON: vi.fn(),
       },
       timestamp: Date.now(),
+      toJSON: vi.fn(),
     };
 
     act(() => {

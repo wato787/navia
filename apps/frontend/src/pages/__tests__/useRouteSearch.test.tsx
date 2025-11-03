@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,6 +29,7 @@ describe("useRouteSearch", () => {
   let queryClient: QueryClient;
   let mockMap: { getMap: ReturnType<typeof vi.fn> };
   let mockMapRef: { current: MapRef | null };
+  let alertMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     queryClient = new QueryClient({
@@ -50,6 +51,9 @@ describe("useRouteSearch", () => {
       current: mockMap as unknown as MapRef,
     };
 
+    alertMock = vi.fn();
+    vi.stubGlobal("alert", alertMock);
+
     vi.clearAllMocks();
   });
 
@@ -57,7 +61,7 @@ describe("useRouteSearch", () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  it("should initialize with idle status", () => {
+  it("idleステータスで初期化される", () => {
     const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
       wrapper,
     });
@@ -66,20 +70,23 @@ describe("useRouteSearch", () => {
     expect(result.current.isPending).toBe(false);
   });
 
-  it("should search destination and get route", async () => {
+  it("目的地を検索して経路を取得できる", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
+    const mockRoute = {
+      type: "FeatureCollection" as const,
       features: [
         {
-          type: "Feature",
-          properties: {},
+          type: "Feature" as const,
+          properties: {
+            distance: 1000,
+            duration: 300,
+          },
           geometry: {
-            type: "LineString",
+            type: "LineString" as const,
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ],
+            ] as [number, number][],
           },
         },
       ],
@@ -111,20 +118,23 @@ describe("useRouteSearch", () => {
     });
   });
 
-  it("should use initial position when currentLocation is null", async () => {
+  it("currentLocationがnullの場合、初期位置を使用する", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
+    const mockRoute = {
+      type: "FeatureCollection" as const,
       features: [
         {
-          type: "Feature",
-          properties: {},
+          type: "Feature" as const,
+          properties: {
+            distance: 1000,
+            duration: 300,
+          },
           geometry: {
-            type: "LineString",
+            type: "LineString" as const,
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ],
+            ] as [number, number][],
           },
         },
       ],
@@ -153,9 +163,7 @@ describe("useRouteSearch", () => {
     });
   });
 
-  it("should show alert on error", async () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
-
+  it("エラー時にアラートを表示する", async () => {
     vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(
       new Error("Address not found"),
     );
@@ -170,14 +178,10 @@ describe("useRouteSearch", () => {
       expect(result.current.isError).toBe(true);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith("Address not found");
-
-    alertSpy.mockRestore();
+    expect(alertMock).toHaveBeenCalledWith("Address not found");
   });
 
-  it("should show default error message when no message provided", async () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
-
+  it("エラーメッセージが提供されていない場合、デフォルトのエラーメッセージを表示する", async () => {
     vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(new Error());
 
     const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
@@ -190,26 +194,27 @@ describe("useRouteSearch", () => {
       expect(result.current.isError).toBe(true);
     });
 
-    expect(alertSpy).toHaveBeenCalled();
-
-    alertSpy.mockRestore();
+    expect(alertMock).toHaveBeenCalled();
   });
 
-  it("should handle multiple consecutive searches", async () => {
+  it("連続した複数の検索を処理できる", async () => {
     const mockDestinationCoords1 = { lat: 35.6895, lng: 139.6917 };
     const mockDestinationCoords2 = { lat: 35.6812, lng: 139.7671 };
-    const mockRoute: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
+    const mockRoute = {
+      type: "FeatureCollection" as const,
       features: [
         {
-          type: "Feature",
-          properties: {},
+          type: "Feature" as const,
+          properties: {
+            distance: 1000,
+            duration: 300,
+          },
           geometry: {
-            type: "LineString",
+            type: "LineString" as const,
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ],
+            ] as [number, number][],
           },
         },
       ],
@@ -242,27 +247,41 @@ describe("useRouteSearch", () => {
     expect(DirectionsUsecase.getRoute).toHaveBeenCalledTimes(2);
   });
 
-  it("should manage loading state correctly", async () => {
+  it("ローディング状態を正しく管理する", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
-    const mockRoute: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
+    const mockRoute = {
+      type: "FeatureCollection" as const,
       features: [
         {
-          type: "Feature",
-          properties: {},
+          type: "Feature" as const,
+          properties: {
+            distance: 1000,
+            duration: 300,
+          },
           geometry: {
-            type: "LineString",
+            type: "LineString" as const,
             coordinates: [
               [139.7671, 35.6812],
               [139.6917, 35.6895],
-            ],
+            ] as [number, number][],
           },
         },
       ],
     };
 
-    vi.mocked(GeocodeUsecase.geocode).mockResolvedValue(mockDestinationCoords);
-    vi.mocked(DirectionsUsecase.getRoute).mockResolvedValue(mockRoute);
+    // Promiseを遅延させて、isPending状態を確認できるようにする
+    vi.mocked(GeocodeUsecase.geocode).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve(mockDestinationCoords), 100);
+        }),
+    );
+    vi.mocked(DirectionsUsecase.getRoute).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve(mockRoute), 100);
+        }),
+    );
 
     const currentLocation = { lat: 35.6812, lng: 139.7671 };
     const { result } = renderHook(
@@ -272,10 +291,19 @@ describe("useRouteSearch", () => {
 
     expect(result.current.isPending).toBe(false);
 
-    result.current.mutate({ destination: "Destination", currentLocation });
+    act(() => {
+      result.current.mutate({ destination: "Destination", currentLocation });
+    });
 
-    expect(result.current.isPending).toBe(true);
+    // mutate呼び出し後、isPendingがtrueになることを確認
+    await waitFor(
+      () => {
+        expect(result.current.isPending).toBe(true);
+      },
+      { timeout: 1000 },
+    );
 
+    // その後、isSuccessになることを確認
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });

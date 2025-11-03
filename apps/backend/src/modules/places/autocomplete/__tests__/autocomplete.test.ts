@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import autocomplete from "../index";
 
-// ??fetch???
+// 元のfetchを保存
 const originalFetch = global.fetch;
 
-// fetch????????????????Bun?fetch??????
+// fetchをモックするためのヘルパー関数（Bunのfetch型に合わせる）
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
-  // biome-ignore lint/suspicious/noExplicitAny: fetch?preconnect????????
+  // biome-ignore lint/suspicious/noExplicitAny: fetchのpreconnectプロパティにアクセスするため
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
 
 beforeEach(() => {
-  // ??????fetch?????
+  // 各テスト前にfetchをリセット
   global.fetch = originalFetch;
 });
 
 afterEach(() => {
-  // ??????fetch???
+  // 各テスト後にfetchをリセット
   global.fetch = originalFetch;
 });
 
@@ -35,75 +35,75 @@ describe("Autocomplete API - GET /", () => {
     );
   });
 
-  describe("???????", () => {
-    test("input??????", async () => {
+  describe("バリデーション", () => {
+    test("inputが欠落している場合", async () => {
       const res = await app.request("/");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("input????????", async () => {
+    test("inputが空文字列の場合", async () => {
       const res = await app.request("/?input=");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("latitude???????", async () => {
-      const res = await app.request("/?input=??&latitude=91&longitude=139");
+    test("latitudeが範囲外の場合", async () => {
+      const res = await app.request("/?input=東京&latitude=91&longitude=139");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("longitude???????", async () => {
-      const res = await app.request("/?input=??&latitude=35&longitude=181");
+    test("longitudeが範囲外の場合", async () => {
+      const res = await app.request("/?input=東京&latitude=35&longitude=181");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("radius???????", async () => {
-      const res = await app.request("/?input=??&radius=50001");
+    test("radiusが範囲外の場合", async () => {
+      const res = await app.request("/?input=東京&radius=50001");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("limit??????", async () => {
-      const res = await app.request("/?input=??&limit=0");
+    test("limitが最小値未満の場合", async () => {
+      const res = await app.request("/?input=東京&limit=0");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("limit??????", async () => {
-      const res = await app.request("/?input=??&limit=6");
+    test("limitが最大値超過の場合", async () => {
+      const res = await app.request("/?input=東京&limit=6");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
   });
 
-  describe("???", () => {
-    test("????input??????", async () => {
+  describe("成功", () => {
+    test("正常にinputから候補を取得できる", async () => {
       const mockResponse = {
         suggestions: [
           {
             placePrediction: {
               placeId: "ChIJ51cu8IcbXWARiRtXIothAS4",
               text: {
-                text: "???",
+                text: "東京",
                 matches: [{ startOffset: 0, endOffset: 3 }],
               },
               structuredFormat: {
                 mainText: {
-                  text: "???",
+                  text: "東京",
                   matches: [{ startOffset: 0, endOffset: 3 }],
                 },
                 secondaryText: {
-                  text: "??",
+                  text: "日本",
                   matches: [],
                 },
               },
@@ -122,7 +122,7 @@ describe("Autocomplete API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?input=??");
+      const res = await app.request("/?input=東京");
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -131,32 +131,32 @@ describe("Autocomplete API - GET /", () => {
       expect(body.data.length).toBe(1);
       expect(body.data[0]).toEqual({
         placeId: "ChIJ51cu8IcbXWARiRtXIothAS4",
-        description: "???",
+        description: "東京",
         structuredFormatting: {
-          mainText: "???",
-          secondaryText: "??",
+          mainText: "東京",
+          secondaryText: "日本",
         },
         types: ["administrative_area_level_1", "political"],
       });
     });
 
-    test("?????????", async () => {
+    test("位置情報バイアスを使用して候補を取得できる", async () => {
       const mockResponse = {
         suggestions: [
           {
             placePrediction: {
               placeId: "test-place-id",
               text: {
-                text: "???",
+                text: "東京駅",
                 matches: [{ startOffset: 0, endOffset: 3 }],
               },
               structuredFormat: {
                 mainText: {
-                  text: "???",
+                  text: "東京駅",
                   matches: [{ startOffset: 0, endOffset: 3 }],
                 },
                 secondaryText: {
-                  text: "???????",
+                  text: "東京都千代田区",
                   matches: [],
                 },
               },
@@ -166,7 +166,7 @@ describe("Autocomplete API - GET /", () => {
         ],
       };
 
-      // biome-ignore lint/suspicious/noExplicitAny: ??????JSON?????
+      // biome-ignore lint/suspicious/noExplicitAny: モックのJSONパース用
       let capturedRequestBody: any = null;
       mockFetch(
         mock(async (_url, options) => {
@@ -181,11 +181,11 @@ describe("Autocomplete API - GET /", () => {
       );
 
       const res = await app.request(
-        "/?input=??&latitude=35.6581&longitude=139.7014&radius=1000",
+        "/?input=東京&latitude=35.6581&longitude=139.7014&radius=1000",
       );
       expect(res.status).toBe(200);
 
-      // ???????????????????????
+      // locationBiasが正しく設定されていることを確認
       expect(capturedRequestBody).toBeDefined();
       expect(capturedRequestBody.locationBias).toBeDefined();
       expect(capturedRequestBody.locationBias.circle.center.latitude).toBe(
@@ -201,10 +201,10 @@ describe("Autocomplete API - GET /", () => {
       expect(body.data.length).toBe(1);
     });
 
-    test("????????????", async () => {
+    test("デフォルトのパラメータが設定されている", async () => {
       const mockResponse = { suggestions: [] };
 
-      // biome-ignore lint/suspicious/noExplicitAny: ??????JSON?????
+      // biome-ignore lint/suspicious/noExplicitAny: モックのJSONパース用
       let capturedRequestBody: any = null;
       mockFetch(
         mock(async (_url, options) => {
@@ -218,16 +218,16 @@ describe("Autocomplete API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?input=??");
+      const res = await app.request("/?input=東京");
       expect(res.status).toBe(200);
 
-      // ?????????????????
+      // デフォルトパラメータが設定されていることを確認
       expect(capturedRequestBody.maxResultCount).toBe(5);
       expect(capturedRequestBody.languageCode).toBe("ja");
       expect(capturedRequestBody.includedRegionCodes).toEqual(["JP"]);
     });
 
-    test("???????????", async () => {
+    test("空の候補リストを返す", async () => {
       const mockResponse = { suggestions: [] };
 
       mockFetch(
@@ -239,7 +239,7 @@ describe("Autocomplete API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?input=???????");
+      const res = await app.request("/?input=存在しない場所");
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -249,8 +249,8 @@ describe("Autocomplete API - GET /", () => {
     });
   });
 
-  describe("??????", () => {
-    test("Google Places API???????", async () => {
+  describe("エラー", () => {
+    test("Google Places APIがエラーを返す場合", async () => {
       mockFetch(
         mock(async () => {
           return new Response(
@@ -269,7 +269,7 @@ describe("Autocomplete API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?input=??");
+      const res = await app.request("/?input=東京");
       expect(res.status).toBe(500);
 
       const body = await res.json();
@@ -277,14 +277,14 @@ describe("Autocomplete API - GET /", () => {
       expect(body.error.message).toContain("Google Places API error");
     });
 
-    test("??????????", async () => {
+    test("ネットワークエラーが発生した場合", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
         }),
       );
 
-      const res = await app.request("/?input=??");
+      const res = await app.request("/?input=東京");
       expect(res.status).toBe(500);
 
       const body = await res.json();
@@ -294,7 +294,7 @@ describe("Autocomplete API - GET /", () => {
       );
     });
 
-    test("Google Places API????JSON???", async () => {
+    test("Google Places APIが無効なJSONを返す場合", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {
@@ -304,7 +304,7 @@ describe("Autocomplete API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?input=??");
+      const res = await app.request("/?input=東京");
       expect(res.status).toBe(500);
 
       const body = await res.json();
