@@ -3,7 +3,6 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useRouteDisplay } from "../useRouteDisplay";
 import type { MapRef } from "react-map-gl/mapbox";
 
-// mapbox?????????
 vi.mock("@/lib/mapbox", () => ({
   calculateBounds: vi.fn(() => [
     [139.7, 35.6],
@@ -33,14 +32,14 @@ describe("useRouteDisplay", () => {
     };
   });
 
-  it("displayRoute?????", () => {
+  it("should return displayRoute function", () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     expect(result.current.displayRoute).toBeDefined();
     expect(typeof result.current.displayRoute).toBe("function");
   });
 
-  it("mapRef?null?????????", async () => {
+  it("should do nothing when mapRef is null", async () => {
     const nullMapRef: React.RefObject<MapRef | null> = { current: null };
     const { result } = renderHook(() => useRouteDisplay(nullMapRef));
 
@@ -66,7 +65,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.addSource).not.toHaveBeenCalled();
   });
 
-  it("??????????????????????", async () => {
+  it("should remove existing route and add new one", async () => {
     mockMap.getSource.mockReturnValue(true);
     mockMap.getLayer.mockReturnValue(true);
 
@@ -101,7 +100,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.fitBounds).toHaveBeenCalled();
   });
 
-  it("???????????????????????", async () => {
+  it("should skip removal when no existing source", async () => {
     mockMap.getSource.mockReturnValue(null);
 
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
@@ -130,7 +129,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.addSource).toHaveBeenCalled();
   });
 
-  it("?????????????????????????", async () => {
+  it("should skip layer removal when no existing layer", async () => {
     mockMap.getSource.mockReturnValue(true);
     mockMap.getLayer.mockReturnValue(null);
 
@@ -159,7 +158,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.removeSource).toHaveBeenCalledWith("route");
   });
 
-  it("fitBounds????????????????", async () => {
+  it("should call fitBounds with correct padding", async () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const routeGeoJson: GeoJSON.FeatureCollection = {
@@ -192,7 +191,7 @@ describe("useRouteDisplay", () => {
     );
   });
 
-  it("displayRoute?????????????useCallback????", () => {
+  it("should maintain same function reference (useCallback)", () => {
     const { result, rerender } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const firstDisplayRoute = result.current.displayRoute;
@@ -201,11 +200,10 @@ describe("useRouteDisplay", () => {
 
     const secondDisplayRoute = result.current.displayRoute;
 
-    // ??????????????
     expect(firstDisplayRoute).toBe(secondDisplayRoute);
   });
 
-  it("??????????????????", async () => {
+  it("should handle routes with multiple coordinates", async () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const routeGeoJson: GeoJSON.FeatureCollection = {

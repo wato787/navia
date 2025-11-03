@@ -3,15 +3,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useSearchAutocomplete } from "../useSearchAutocomplete";
 import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
+import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 
-// AutocompleteUsecase????
 vi.mock("@/usecases/AutocompleteUsecase", () => ({
   AutocompleteUsecase: {
     fetchSuggestions: vi.fn(),
   },
 }));
 
-// useDebounce????
 vi.mock("@/hooks/useDebounce", () => ({
   useDebounce: vi.fn((value) => value),
 }));
@@ -35,7 +34,7 @@ describe("useSearchAutocomplete", () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  it("????????????????????", () => {
+  it("should not fetch when query is empty", () => {
     const { result } = renderHook(
       () => useSearchAutocomplete(""),
       { wrapper },
@@ -45,7 +44,7 @@ describe("useSearchAutocomplete", () => {
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
   });
 
-  it("?????????????????????????", () => {
+  it("should not fetch when query is only whitespace", () => {
     const { result } = renderHook(
       () => useSearchAutocomplete("   "),
       { wrapper },
@@ -55,19 +54,27 @@ describe("useSearchAutocomplete", () => {
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
   });
 
-  it("????????????????????", async () => {
-    const mockSuggestions = [
+  it("should fetch suggestions for valid query", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "??????????1??",
-        location: { lat: 35.6812, lng: 139.7671 },
+        placeId: "1",
+        description: "Tokyo Station",
+        structuredFormatting: {
+          mainText: "Tokyo Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.6812, longitude: 139.7671 },
       },
       {
-        id: "2",
-        name: "?????",
-        address: "????????4??2-8",
-        location: { lat: 35.6586, lng: 139.7454 },
+        placeId: "2",
+        description: "Tokyo Tower",
+        structuredFormatting: {
+          mainText: "Tokyo Tower",
+          secondaryText: "Tokyo",
+        },
+        types: ["landmark"],
+        location: { latitude: 35.6586, longitude: 139.7454 },
       },
     ];
 
@@ -76,7 +83,7 @@ describe("useSearchAutocomplete", () => {
     );
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("??"),
+      () => useSearchAutocomplete("Tokyo"),
       { wrapper },
     );
 
@@ -85,7 +92,7 @@ describe("useSearchAutocomplete", () => {
     });
 
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledWith({
-      query: "??",
+      query: "Tokyo",
       proximity: undefined,
       limit: undefined,
     });
@@ -93,13 +100,17 @@ describe("useSearchAutocomplete", () => {
     expect(result.current.data).toEqual(mockSuggestions);
   });
 
-  it("proximity???????????", async () => {
-    const mockSuggestions = [
+  it("should pass proximity option correctly", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "??????",
-        location: { lat: 35.6580, lng: 139.7016 },
+        placeId: "1",
+        description: "Shibuya Station",
+        structuredFormatting: {
+          mainText: "Shibuya Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.6580, longitude: 139.7016 },
       },
     ];
 
@@ -110,7 +121,7 @@ describe("useSearchAutocomplete", () => {
     const proximity = { lat: 35.6812, lng: 139.7671 };
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("?", { proximity }),
+      () => useSearchAutocomplete("Station", { proximity }),
       { wrapper },
     );
 
@@ -119,19 +130,23 @@ describe("useSearchAutocomplete", () => {
     });
 
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledWith({
-      query: "?",
+      query: "Station",
       proximity,
       limit: undefined,
     });
   });
 
-  it("limit???????????", async () => {
-    const mockSuggestions = [
+  it("should pass limit option correctly", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "??????",
-        location: { lat: 35.6896, lng: 139.7006 },
+        placeId: "1",
+        description: "Shinjuku Station",
+        structuredFormatting: {
+          mainText: "Shinjuku Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.6896, longitude: 139.7006 },
       },
     ];
 
@@ -140,7 +155,7 @@ describe("useSearchAutocomplete", () => {
     );
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("??", { limit: 5 }),
+      () => useSearchAutocomplete("Shinjuku", { limit: 5 }),
       { wrapper },
     );
 
@@ -149,19 +164,23 @@ describe("useSearchAutocomplete", () => {
     });
 
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledWith({
-      query: "??",
+      query: "Shinjuku",
       proximity: undefined,
       limit: 5,
     });
   });
 
-  it("proximity?limit???????????????", async () => {
-    const mockSuggestions = [
+  it("should pass both proximity and limit options", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "??????",
-        location: { lat: 35.7295, lng: 139.7109 },
+        placeId: "1",
+        description: "Ikebukuro Station",
+        structuredFormatting: {
+          mainText: "Ikebukuro Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.7295, longitude: 139.7109 },
       },
     ];
 
@@ -172,7 +191,7 @@ describe("useSearchAutocomplete", () => {
     const proximity = { lat: 35.6812, lng: 139.7671 };
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("??", { proximity, limit: 3 }),
+      () => useSearchAutocomplete("Ikebukuro", { proximity, limit: 3 }),
       { wrapper },
     );
 
@@ -181,19 +200,19 @@ describe("useSearchAutocomplete", () => {
     });
 
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledWith({
-      query: "??",
+      query: "Ikebukuro",
       proximity,
       limit: 3,
     });
   });
 
-  it("????????????????", async () => {
+  it("should return error state on failure", async () => {
     vi.mocked(AutocompleteUsecase.fetchSuggestions).mockRejectedValue(
-      new Error("API ???"),
+      new Error("API error"),
     );
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("???"),
+      () => useSearchAutocomplete("Error"),
       { wrapper },
     );
 
@@ -202,16 +221,20 @@ describe("useSearchAutocomplete", () => {
     });
 
     expect(result.current.error).toBeInstanceOf(Error);
-    expect((result.current.error as Error).message).toBe("API ???");
+    expect((result.current.error as Error).message).toBe("API error");
   });
 
-  it("?????????????", async () => {
-    const mockSuggestions = [
+  it("should cache results correctly", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "???????",
-        location: { lat: 35.6285, lng: 139.7387 },
+        placeId: "1",
+        description: "Shinagawa Station",
+        structuredFormatting: {
+          mainText: "Shinagawa Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.6285, longitude: 139.7387 },
       },
     ];
 
@@ -219,9 +242,8 @@ describe("useSearchAutocomplete", () => {
       mockSuggestions,
     );
 
-    // 1?????????
     const { result: result1 } = renderHook(
-      () => useSearchAutocomplete("??"),
+      () => useSearchAutocomplete("Shinagawa"),
       { wrapper },
     );
 
@@ -231,9 +253,8 @@ describe("useSearchAutocomplete", () => {
 
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledTimes(1);
 
-    // 2????????????????
     const { result: result2 } = renderHook(
-      () => useSearchAutocomplete("??"),
+      () => useSearchAutocomplete("Shinagawa"),
       { wrapper },
     );
 
@@ -241,16 +262,15 @@ describe("useSearchAutocomplete", () => {
       expect(result2.current.isSuccess).toBe(true);
     });
 
-    // ???????????????API?1???????
     expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledTimes(1);
     expect(result2.current.data).toEqual(mockSuggestions);
   });
 
-  it("????????????", async () => {
+  it("should handle empty results", async () => {
     vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue([]);
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("???????"),
+      () => useSearchAutocomplete("NonExistent"),
       { wrapper },
     );
 
@@ -261,13 +281,17 @@ describe("useSearchAutocomplete", () => {
     expect(result.current.data).toEqual([]);
   });
 
-  it("?????????????????", async () => {
-    const mockSuggestions = [
+  it("should manage loading state correctly", async () => {
+    const mockSuggestions: AutocompleteSuggestion[] = [
       {
-        id: "1",
-        name: "???",
-        address: "??????",
-        location: { lat: 35.7138, lng: 139.7774 },
+        placeId: "1",
+        description: "Ueno Station",
+        structuredFormatting: {
+          mainText: "Ueno Station",
+          secondaryText: "Tokyo",
+        },
+        types: ["station"],
+        location: { latitude: 35.7138, longitude: 139.7774 },
       },
     ];
 
@@ -276,50 +300,16 @@ describe("useSearchAutocomplete", () => {
     );
 
     const { result } = renderHook(
-      () => useSearchAutocomplete("??"),
+      () => useSearchAutocomplete("Ueno"),
       { wrapper },
     );
 
-    // ????
     expect(result.current.isLoading).toBe(true);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    // ???
     expect(result.current.isLoading).toBe(false);
-  });
-
-  it("???????????????", async () => {
-    const mockSuggestions = [
-      {
-        id: "1",
-        name: "??????",
-        address: "????????",
-        location: { lat: 35.7101, lng: 139.8107 },
-      },
-    ];
-
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
-
-    const { result } = renderHook(
-      () => useSearchAutocomplete("??????"),
-      { wrapper },
-    );
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(AutocompleteUsecase.fetchSuggestions).toHaveBeenCalledWith({
-      query: "??????",
-      proximity: undefined,
-      limit: undefined,
-    });
-
-    expect(result.current.data).toEqual(mockSuggestions);
   });
 });

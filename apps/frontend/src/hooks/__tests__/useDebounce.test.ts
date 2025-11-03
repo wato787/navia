@@ -3,63 +3,57 @@ import { describe, expect, it, vi } from "vitest";
 import { useDebounce } from "../useDebounce";
 
 describe("useDebounce", () => {
-  it("?????????", () => {
-    const { result } = renderHook(() => useDebounce("???", 500));
+  it("should return initial value immediately", () => {
+    const { result } = renderHook(() => useDebounce("initial", 500));
 
-    expect(result.current).toBe("???");
+    expect(result.current).toBe("initial");
   });
 
-  it("?????????????", async () => {
+  it("should return new value after delay", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
-        initialProps: { value: "???", delay: 500 },
+        initialProps: { value: "initial", delay: 500 },
       },
     );
 
-    expect(result.current).toBe("???");
+    expect(result.current).toBe("initial");
 
-    // ????
-    rerender({ value: "????", delay: 500 });
+    rerender({ value: "updated", delay: 500 });
 
-    // ??????????
-    expect(result.current).toBe("???");
+    expect(result.current).toBe("initial");
 
-    // ???????????
     await waitFor(
       () => {
-        expect(result.current).toBe("????");
+        expect(result.current).toBe("updated");
       },
       { timeout: 600 },
     );
   });
 
-  it("???????????????????", async () => {
+  it("should debounce multiple rapid changes", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
-        initialProps: { value: "?1", delay: 500 },
+        initialProps: { value: "value1", delay: 500 },
       },
     );
 
-    // ?????????
-    rerender({ value: "?2", delay: 500 });
-    rerender({ value: "?3", delay: 500 });
-    rerender({ value: "???", delay: 500 });
+    rerender({ value: "value2", delay: 500 });
+    rerender({ value: "value3", delay: 500 });
+    rerender({ value: "final", delay: 500 });
 
-    // ??????????
-    expect(result.current).toBe("?1");
+    expect(result.current).toBe("value1");
 
-    // ????????????????
     await waitFor(
       () => {
-        expect(result.current).toBe("???");
+        expect(result.current).toBe("final");
       },
       { timeout: 600 },
     );
   });
 
-  it("?????????debounce??", async () => {
+  it("should handle number values", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -79,9 +73,9 @@ describe("useDebounce", () => {
     );
   });
 
-  it("?????????????debounce??", async () => {
-    const obj1 = { name: "??", age: 20 };
-    const obj2 = { name: "??", age: 25 };
+  it("should handle object values", async () => {
+    const obj1 = { name: "John", age: 20 };
+    const obj2 = { name: "Jane", age: 25 };
 
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
@@ -102,33 +96,31 @@ describe("useDebounce", () => {
     );
   });
 
-  it("????????????????????", async () => {
+  it("should handle delay changes", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
-        initialProps: { value: "???", delay: 500 },
+        initialProps: { value: "initial", delay: 500 },
       },
     );
 
-    rerender({ value: "????", delay: 200 });
+    rerender({ value: "updated", delay: 200 });
 
-    // ????????????
     await waitFor(
       () => {
-        expect(result.current).toBe("????");
+        expect(result.current).toBe("updated");
       },
       { timeout: 300 },
     );
   });
 
-  it("???????????????????????", () => {
+  it("should cleanup timer on unmount", () => {
     vi.useFakeTimers();
 
-    const { unmount } = renderHook(() => useDebounce("?", 500));
+    const { unmount } = renderHook(() => useDebounce("value", 500));
 
     unmount();
 
-    // ??????????????
     vi.runAllTimers();
 
     vi.useRealTimers();

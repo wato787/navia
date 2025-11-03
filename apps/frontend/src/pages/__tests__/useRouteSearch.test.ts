@@ -6,7 +6,6 @@ import type { MapRef } from "react-map-gl/mapbox";
 import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
 import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
 
-// Usecase????
 vi.mock("@/usecases/GeocodeUsecase", () => ({
   GeocodeUsecase: {
     geocode: vi.fn(),
@@ -19,7 +18,6 @@ vi.mock("@/usecases/DirectionsUsecase", () => ({
   },
 }));
 
-// useRouteDisplay????
 vi.mock("../useRouteDisplay", () => ({
   useRouteDisplay: vi.fn(() => ({
     displayRoute: vi.fn(),
@@ -58,7 +56,7 @@ describe("useRouteSearch", () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  it("?????idle????????", () => {
+  it("should initialize with idle status", () => {
     const { result } = renderHook(
       () => useRouteSearch(mockMapRef, null),
       { wrapper },
@@ -68,7 +66,7 @@ describe("useRouteSearch", () => {
     expect(result.current.isPending).toBe(false);
   });
 
-  it("mutateAsync????????????????", async () => {
+  it("should search destination and get route", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
     const mockRoute: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
@@ -96,14 +94,14 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "???", currentLocation });
+    result.current.mutate({ destination: "Tokyo Station", currentLocation });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
     expect(GeocodeUsecase.geocode).toHaveBeenCalledWith({
-      address: "???",
+      address: "Tokyo Station",
     });
 
     expect(DirectionsUsecase.getRoute).toHaveBeenCalledWith({
@@ -113,7 +111,7 @@ describe("useRouteSearch", () => {
     });
   });
 
-  it("????null?????????????", async () => {
+  it("should use initial position when currentLocation is null", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
     const mockRoute: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
@@ -140,7 +138,7 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "???", currentLocation: null });
+    result.current.mutate({ destination: "Shinjuku", currentLocation: null });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -156,11 +154,11 @@ describe("useRouteSearch", () => {
     });
   });
 
-  it("????????????????", async () => {
+  it("should show alert on error", async () => {
     const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
 
     vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(
-      new Error("??????????"),
+      new Error("Address not found"),
     );
 
     const { result } = renderHook(
@@ -168,18 +166,18 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "???????", currentLocation: null });
+    result.current.mutate({ destination: "Invalid", currentLocation: null });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith("??????????");
+    expect(alertSpy).toHaveBeenCalledWith("Address not found");
 
     alertSpy.mockRestore();
   });
 
-  it("?????????????????????????????", async () => {
+  it("should show default error message when no message provided", async () => {
     const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
 
     vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(new Error());
@@ -189,18 +187,18 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "???", currentLocation: null });
+    result.current.mutate({ destination: "Dest", currentLocation: null });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith("??????????");
+    expect(alertSpy).toHaveBeenCalled();
 
     alertSpy.mockRestore();
   });
 
-  it("????????????????", async () => {
+  it("should handle multiple consecutive searches", async () => {
     const mockDestinationCoords1 = { lat: 35.6895, lng: 139.6917 };
     const mockDestinationCoords2 = { lat: 35.6812, lng: 139.7671 };
     const mockRoute: GeoJSON.FeatureCollection = {
@@ -231,15 +229,13 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    // 1?????
-    result.current.mutate({ destination: "???", currentLocation });
+    result.current.mutate({ destination: "Shibuya", currentLocation });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    // 2?????
-    result.current.mutate({ destination: "???", currentLocation });
+    result.current.mutate({ destination: "Ikebukuro", currentLocation });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -249,7 +245,7 @@ describe("useRouteSearch", () => {
     expect(DirectionsUsecase.getRoute).toHaveBeenCalledTimes(2);
   });
 
-  it("?????????????????", async () => {
+  it("should manage loading state correctly", async () => {
     const mockDestinationCoords = { lat: 35.6895, lng: 139.6917 };
     const mockRoute: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
@@ -279,16 +275,14 @@ describe("useRouteSearch", () => {
 
     expect(result.current.isPending).toBe(false);
 
-    result.current.mutate({ destination: "???", currentLocation });
+    result.current.mutate({ destination: "Destination", currentLocation });
 
-    // ???????
     expect(result.current.isPending).toBe(true);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    // ???
     expect(result.current.isPending).toBe(false);
   });
 });

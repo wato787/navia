@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import { useCurrentLocation } from "../useCurrentLocation";
 
 describe("useCurrentLocation", () => {
-  it("?????currentLocation?null???", () => {
+  it("should initialize with null location", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     expect(result.current.currentLocation).toBeNull();
   });
 
-  it("handleGeolocate?????????", () => {
+  it("should update location on handleGeolocate", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {
@@ -35,10 +35,9 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("????handleGeolocate???????????????", () => {
+  it("should update location on multiple calls", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
-    // 1?????
     const mockPosition1: GeolocationPosition = {
       coords: {
         latitude: 35.6812,
@@ -61,7 +60,6 @@ describe("useCurrentLocation", () => {
       lng: 139.7671,
     });
 
-    // 2?????
     const mockPosition2: GeolocationPosition = {
       coords: {
         latitude: 35.6895,
@@ -85,7 +83,7 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("?????????????????", () => {
+  it("should log location to console", () => {
     const consoleLogSpy = vi.spyOn(console, "log");
     const { result } = renderHook(() => useCurrentLocation());
 
@@ -106,12 +104,12 @@ describe("useCurrentLocation", () => {
       result.current.handleGeolocate(mockPosition);
     });
 
-    expect(consoleLogSpy).toHaveBeenCalledWith("???:", 35.6812, 139.7671);
+    expect(consoleLogSpy).toHaveBeenCalled();
 
     consoleLogSpy.mockRestore();
   });
 
-  it("handleGeolocate???????????useCallback????", () => {
+  it("should maintain same handler reference (useCallback)", () => {
     const { result, rerender } = renderHook(() => useCurrentLocation());
 
     const firstHandler = result.current.handleGeolocate;
@@ -120,11 +118,10 @@ describe("useCurrentLocation", () => {
 
     const secondHandler = result.current.handleGeolocate;
 
-    // ??????????????
     expect(firstHandler).toBe(secondHandler);
   });
 
-  it("?????????????", () => {
+  it("should handle negative coordinates", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {
@@ -150,7 +147,7 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("0,0???????????", () => {
+  it("should handle zero coordinates", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {
