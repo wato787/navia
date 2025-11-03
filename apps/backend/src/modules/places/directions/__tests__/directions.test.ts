@@ -1,4 +1,4 @@
-import { describe, test, expect, mock, beforeEach, afterEach } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import directions from "../index";
 
@@ -8,6 +8,7 @@ const originalFetch = global.fetch;
 // fetch????Bun?fetch???????????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
+  // biome-ignore lint/suspicious/noExplicitAny: ??????????
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
@@ -23,7 +24,7 @@ afterEach(() => {
 });
 
 describe("Directions API - GET /", () => {
-  const app = new Hono().route("/", directions).onError((err, c) => {
+  const app = new Hono().route("/", directions).onError((_err, c) => {
     return c.json(
       {
         error: {

@@ -1,4 +1,4 @@
-import { describe, test, expect, mock, beforeEach, afterEach } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import autocomplete from "../index";
 
@@ -8,6 +8,7 @@ const originalFetch = global.fetch;
 // fetch????Bun?fetch???????????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
+  // biome-ignore lint/suspicious/noExplicitAny: ??????????
   wrapper.preconnect = (originalFetch as any).preconnect;
   global.fetch = wrapper;
 };
@@ -23,7 +24,7 @@ afterEach(() => {
 });
 
 describe("Autocomplete API - GET /", () => {
-  const app = new Hono().route("/", autocomplete).onError((err, c) => {
+  const app = new Hono().route("/", autocomplete).onError((_err, c) => {
     return c.json(
       {
         error: {
@@ -165,9 +166,10 @@ describe("Autocomplete API - GET /", () => {
         ],
       };
 
+      // biome-ignore lint/suspicious/noExplicitAny: ?????JSON??????
       let capturedRequestBody: any = null;
       mockFetch(
-        mock(async (url, options) => {
+        mock(async (_url, options) => {
           if (options?.body) {
             capturedRequestBody = JSON.parse(options.body as string);
           }
@@ -202,9 +204,10 @@ describe("Autocomplete API - GET /", () => {
     test("??????????", async () => {
       const mockResponse = { suggestions: [] };
 
+      // biome-ignore lint/suspicious/noExplicitAny: ?????JSON??????
       let capturedRequestBody: any = null;
       mockFetch(
-        mock(async (url, options) => {
+        mock(async (_url, options) => {
           if (options?.body) {
             capturedRequestBody = JSON.parse(options.body as string);
           }

@@ -16,7 +16,7 @@ geocode.get("/", validateQuery(GeocodeQuerySchema), async (c) => {
   const { address } = c.req.valid("query");
 
   try {
-    const url = \`https://maps.googleapis.com/maps/api/geocode/json?address=\${encodeURIComponent(address)}&key=\${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja\`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja`;
     const response = await fetch(url);
     const data = (await response.json()) as GeocodeResponse;
 
@@ -25,7 +25,7 @@ geocode.get("/", validateQuery(GeocodeQuerySchema), async (c) => {
       return c.json(
         {
           error: {
-            message: \`Google Geocoding API error: \${data.status}\`,
+            message: `Google Geocoding API error: ${data.status}`,
           },
         },
         500,
@@ -43,7 +43,7 @@ geocode.get("/", validateQuery(GeocodeQuerySchema), async (c) => {
     return c.json(
       {
         error: {
-          message: "No routes found",
+          message: "No results found",
         },
       },
       404,

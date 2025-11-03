@@ -61,7 +61,7 @@ autocomplete.get("/", validateQuery(AutocompleteQuerySchema), async (c) => {
       return c.json(
         {
           error: {
-            message: \`Google Places API error: \${response.status} \${response.statusText}\`,
+            message: `Google Places API error: ${response.status} ${response.statusText}`,
           },
         },
         500,
