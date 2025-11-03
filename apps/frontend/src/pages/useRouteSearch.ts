@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { geocodeAddress, getRoute } from "@/lib/google-places";
+import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
+import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
 import type { Location } from "@/types/location";
 import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
@@ -22,10 +23,9 @@ export function useRouteSearch(
   const mutation = useMutation({
     mutationFn: async ({ destination }: RouteSearchParams) => {
       // 目的地を座標に変換
-      const destinationCoords = await geocodeAddress(destination);
-      if (!destinationCoords) {
-        throw new Error("目的地が見つかりませんでした");
-      }
+      const destinationCoords = await GeocodeUsecase.geocode({
+        address: destination,
+      });
 
       // 現在地が取得できていない場合は、初期位置を使用
       const startCoords = currentLocation || {
@@ -34,10 +34,11 @@ export function useRouteSearch(
       };
 
       // 経路を取得
-      const route = await getRoute(startCoords, destinationCoords);
-      if (!route) {
-        throw new Error("経路を取得できませんでした");
-      }
+      const route = await DirectionsUsecase.getRoute({
+        origin: startCoords,
+        destination: destinationCoords,
+        mode: "driving",
+      });
 
       return route;
     },

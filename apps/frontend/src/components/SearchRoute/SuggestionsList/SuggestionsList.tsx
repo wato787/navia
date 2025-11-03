@@ -1,12 +1,12 @@
 import { Loader2 } from "lucide-react";
-import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
+import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
 import { useSearchAutocomplete } from "./useSearchAutocomplete";
 
 type SuggestionsListProps = {
   query: string;
   currentLocation?: Location | null;
-  onSuggestionClick: (suggestion: GooglePlacesAutocompletePrediction) => void;
+  onSuggestionClick: (suggestion: AutocompleteSuggestion) => void;
 };
 
 export function SuggestionsList({

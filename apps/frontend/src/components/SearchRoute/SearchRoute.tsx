@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { GooglePlacesAutocompletePrediction } from "@/lib/google-places";
+import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
 import { SearchBar } from "./SearchBar";
 import { SuggestionsList } from "./SuggestionsList";
@@ -18,9 +18,7 @@ export function SearchRoute({ onSearch, currentLocation }: SearchRouteProps) {
     }
   };
 
-  const handleSuggestionClick = (
-    suggestion: GooglePlacesAutocompletePrediction,
-  ) => {
+  const handleSuggestionClick = (suggestion: AutocompleteSuggestion) => {
     const fullName = suggestion.structuredFormatting.secondaryText
       ? `${suggestion.structuredFormatting.mainText}, ${suggestion.structuredFormatting.secondaryText}`
       : suggestion.structuredFormatting.mainText;
