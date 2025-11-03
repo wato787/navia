@@ -1,11 +1,11 @@
 import { describe, test, expect, mock, beforeEach, afterEach } from "bun:test";
 import { Hono } from "hono";
-import geocode from "./geocode";
+import geocode from "../index";
 
-// ?????fetch????
+// ???fetch???
 const originalFetch = global.fetch;
 
-// fetchモックをBunのfetch型に適合させるヘルパー
+// fetch????Bun?fetch???????????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
   wrapper.preconnect = (originalFetch as any).preconnect;
@@ -18,7 +18,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // 各テストの後にfetchを確実に復元
+  // ???????fetch??????
   global.fetch = originalFetch;
 });
 
@@ -35,14 +35,14 @@ describe("Geocode API - GET /", () => {
   });
 
   describe("???????", () => {
-    test("address????????", async () => {
+    test("address???????", async () => {
       const res = await app.request("/");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("address???????????", async () => {
+    test("address?????????", async () => {
       const res = await app.request("/?address=");
       expect(res.status).toBe(500);
       const body = await res.json();
@@ -51,7 +51,7 @@ describe("Geocode API - GET /", () => {
   });
 
   describe("???", () => {
-    test("?????????????", async () => {
+    test("????????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -75,7 +75,7 @@ describe("Geocode API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?address=??????");
+      const res = await app.request("/?address=?????");
       expect(res.status).toBe(200);
 
       const body = await res.json();
@@ -84,7 +84,7 @@ describe("Geocode API - GET /", () => {
       expect(body.data.lng).toBe(139.7014);
     });
 
-    test("???URL????????", async () => {
+    test("???URL ????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -110,16 +110,16 @@ describe("Geocode API - GET /", () => {
         }),
       );
 
-      const res = await app.request("/?address=??????");
+      const res = await app.request("/?address=???");
       expect(res.status).toBe(200);
 
-      // URL???????????????
-      expect(capturedUrl).toContain(encodeURIComponent("??????"));
+      // URL???????????????????
+      expect(capturedUrl).toContain(encodeURIComponent("???"));
       expect(capturedUrl).toContain("region=JP");
       expect(capturedUrl).toContain("language=ja");
     });
 
-    test("???????????????????", async () => {
+    test("?????????????????????", async () => {
       const mockResponse = {
         status: "OK",
         results: [
@@ -195,7 +195,7 @@ describe("Geocode API - GET /", () => {
   });
 
   describe("?????????", () => {
-    test("Google Geocoding API?ZERO_RESULTS?????", async () => {
+    test("Google Geocoding API?ZERO_RESULTS???", async () => {
       const mockResponse = {
         status: "ZERO_RESULTS",
       };
@@ -217,7 +217,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toContain("Google Geocoding API error");
     });
 
-    test("results?????", async () => {
+    test("results????", async () => {
       const mockResponse = {
         status: "OK",
         results: [],
@@ -240,7 +240,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toBe("No results found");
     });
 
-    test("????????????????", async () => {
+    test("????????????", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
@@ -255,7 +255,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toBe("Failed to geocode address");
     });
 
-    test("???JSON???????", async () => {
+    test("???JSON?????", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {
@@ -272,7 +272,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error).toBeDefined();
     });
 
-    test("Google Geocoding API?REQUEST_DENIED?????", async () => {
+    test("Google Geocoding API?REQUEST_DENIED???", async () => {
       const mockResponse = {
         status: "REQUEST_DENIED",
         error_message: "API key is invalid",
@@ -295,7 +295,7 @@ describe("Geocode API - GET /", () => {
       expect(body.error.message).toContain("Google Geocoding API error");
     });
 
-    test("Google Geocoding API?OVER_QUERY_LIMIT?????", async () => {
+    test("Google Geocoding API?OVER_QUERY_LIMIT???", async () => {
       const mockResponse = {
         status: "OVER_QUERY_LIMIT",
       };

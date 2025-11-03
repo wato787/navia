@@ -1,11 +1,11 @@
 import { describe, test, expect, mock, beforeEach, afterEach } from "bun:test";
 import { Hono } from "hono";
-import autocomplete from "./autocomplete";
+import autocomplete from "../index";
 
-// ?????fetch????
+// ???fetch???
 const originalFetch = global.fetch;
 
-// fetchモックをBunのfetch型に適合させるヘルパー
+// fetch????Bun?fetch???????????
 const mockFetch = (mockFn: ReturnType<typeof mock>) => {
   const wrapper = mockFn as unknown as typeof fetch;
   wrapper.preconnect = (originalFetch as any).preconnect;
@@ -18,7 +18,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // 各テストの後にfetchを確実に復元
+  // ???????fetch??????
   global.fetch = originalFetch;
 });
 
@@ -35,49 +35,49 @@ describe("Autocomplete API - GET /", () => {
   });
 
   describe("???????", () => {
-    test("input????????", async () => {
+    test("input???????", async () => {
       const res = await app.request("/");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("input???????????", async () => {
+    test("input?????????", async () => {
       const res = await app.request("/?input=");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("latitude???????????", async () => {
+    test("latitude???????", async () => {
       const res = await app.request("/?input=??&latitude=91&longitude=139");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("longitude???????????", async () => {
+    test("longitude???????", async () => {
       const res = await app.request("/?input=??&latitude=35&longitude=181");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("radius???????????", async () => {
+    test("radius???????", async () => {
       const res = await app.request("/?input=??&radius=50001");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("limit????????????????", async () => {
+    test("limit????????", async () => {
       const res = await app.request("/?input=??&limit=0");
       expect(res.status).toBe(500);
       const body = await res.json();
       expect(body.error).toBeDefined();
     });
 
-    test("limit????????????????", async () => {
+    test("limit????????", async () => {
       const res = await app.request("/?input=??&limit=6");
       expect(res.status).toBe(500);
       const body = await res.json();
@@ -86,7 +86,7 @@ describe("Autocomplete API - GET /", () => {
   });
 
   describe("???", () => {
-    test("???input??????????????", async () => {
+    test("??input?????????", async () => {
       const mockResponse = {
         suggestions: [
           {
@@ -139,7 +139,7 @@ describe("Autocomplete API - GET /", () => {
       });
     });
 
-    test("???????????????", async () => {
+    test("???????????", async () => {
       const mockResponse = {
         suggestions: [
           {
@@ -155,7 +155,7 @@ describe("Autocomplete API - GET /", () => {
                   matches: [{ startOffset: 0, endOffset: 3 }],
                 },
                 secondaryText: {
-                  text: "??????",
+                  text: "???????",
                   matches: [],
                 },
               },
@@ -199,7 +199,7 @@ describe("Autocomplete API - GET /", () => {
       expect(body.data.length).toBe(1);
     });
 
-    test("????????????", async () => {
+    test("??????????", async () => {
       const mockResponse = { suggestions: [] };
 
       let capturedRequestBody: any = null;
@@ -218,13 +218,13 @@ describe("Autocomplete API - GET /", () => {
       const res = await app.request("/?input=???");
       expect(res.status).toBe(200);
 
-      // ???????????????????
+      // ????????????????????
       expect(capturedRequestBody.maxResultCount).toBe(5);
       expect(capturedRequestBody.languageCode).toBe("ja");
       expect(capturedRequestBody.includedRegionCodes).toEqual(["JP"]);
     });
 
-    test("?????????????????", async () => {
+    test("????????????????", async () => {
       const mockResponse = { suggestions: [] };
 
       mockFetch(
@@ -247,7 +247,7 @@ describe("Autocomplete API - GET /", () => {
   });
 
   describe("?????????", () => {
-    test("Google Places API?????????", async () => {
+    test("Google Places API???????", async () => {
       mockFetch(
         mock(async () => {
           return new Response(
@@ -274,7 +274,7 @@ describe("Autocomplete API - GET /", () => {
       expect(body.error.message).toContain("Google Places API error");
     });
 
-    test("????????????????", async () => {
+    test("????????????", async () => {
       mockFetch(
         mock(async () => {
           throw new Error("Network error");
@@ -291,7 +291,7 @@ describe("Autocomplete API - GET /", () => {
       );
     });
 
-    test("Google Places API????JSON?????", async () => {
+    test("Google Places API????JSON???", async () => {
       mockFetch(
         mock(async () => {
           return new Response("Invalid JSON", {

@@ -1,38 +1,16 @@
 import { Hono } from "hono";
-import { z } from "zod";
 
 import { ENV } from "../../../config/env";
 import { validateQuery } from "../../../plugins/validator";
 import type { AppBindings } from "../../../types/app";
 import { ok } from "../../../utils/response";
+import { GeocodeQuerySchema, type GeocodeResponse } from "./schema";
 
 const geocode = new Hono<AppBindings>();
 
 /**
- * Google Geocoding API ???????
- */
-const GeocodeQuerySchema = z.object({
-  address: z.string().min(1, "???????"),
-});
-
-/**
- * Google Geocoding API ??????
- */
-type GeocodeResponse = {
-  status: string;
-  results?: Array<{
-    geometry: {
-      location: {
-        lat: number;
-        lng: number;
-      };
-    };
-  }>;
-};
-
-/**
  * GET /geocode
- * Google Geocoding API ????????????
+ * Google Geocoding API ???????????????
  */
 geocode.get("/", validateQuery(GeocodeQuerySchema), async (c) => {
   const { address } = c.req.valid("query");

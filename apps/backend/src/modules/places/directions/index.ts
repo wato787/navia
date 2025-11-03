@@ -1,76 +1,16 @@
 import { Hono } from "hono";
-import { z } from "zod";
 
 import { ENV } from "../../../config/env";
 import { validateQuery } from "../../../plugins/validator";
 import type { AppBindings } from "../../../types/app";
 import { ok } from "../../../utils/response";
+import { DirectionsQuerySchema, type DirectionsResponse } from "./schema";
 
 const directions = new Hono<AppBindings>();
 
 /**
- * Google Directions API ???????
- */
-const DirectionsQuerySchema = z.object({
-  originLat: z
-    .string()
-    .transform((val) => Number(val))
-    .refine((val) => Number.isFinite(val) && val >= -90 && val <= 90, {
-      message: "???-90??90????????????",
-    }),
-  originLng: z
-    .string()
-    .transform((val) => Number(val))
-    .refine((val) => Number.isFinite(val) && val >= -180 && val <= 180, {
-      message: "???-180??180????????????",
-    }),
-  destLat: z
-    .string()
-    .transform((val) => Number(val))
-    .refine((val) => Number.isFinite(val) && val >= -90 && val <= 90, {
-      message: "???-90??90????????????",
-    }),
-  destLng: z
-    .string()
-    .transform((val) => Number(val))
-    .refine((val) => Number.isFinite(val) && val >= -180 && val <= 180, {
-      message: "???-180??180????????????",
-    }),
-  mode: z
-    .enum(["driving", "walking", "bicycling", "transit"])
-    .default("driving"),
-  alternatives: z
-    .string()
-    .optional()
-    .default("false")
-    .transform((val) => val === "true"),
-});
-
-/**
- * Google Directions API ??????
- */
-type DirectionsResponse = {
-  status: string;
-  routes?: Array<{
-    legs: Array<{
-      distance: {
-        value: number;
-        text: string;
-      };
-      duration: {
-        value: number;
-        text: string;
-      };
-    }>;
-    overview_polyline: {
-      points: string;
-    };
-  }>;
-};
-
-/**
  * GET /directions
- * Google Directions API ????????????
+ * Google Directions API ??????????
  */
 directions.get("/", validateQuery(DirectionsQuerySchema), async (c) => {
   const { originLat, originLng, destLat, destLng, mode, alternatives } =
