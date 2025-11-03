@@ -44,9 +44,7 @@ export const GeocodeUsecase = {
     if (!response.ok) {
       const error = await response.json();
       console.error("Geocode API error:", error);
-      throw new Error(
-        `ジオコーディングに失敗しました: ${response.statusText}`,
-      );
+      throw new Error(`ジオコーディングに失敗しました: ${response.statusText}`);
     }
 
     const result: GeocodeResponse = await response.json();

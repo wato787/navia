@@ -26,9 +26,7 @@ vi.mock(
   }),
 );
 
-const createSuggestion = (
-  overrides: Partial<AutocompleteSuggestion> = {},
-) =>
+const createSuggestion = (overrides: Partial<AutocompleteSuggestion> = {}) =>
   ({
     placeId: "route-suggestion-1",
     description: "Sample Place",

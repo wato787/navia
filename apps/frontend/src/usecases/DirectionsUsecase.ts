@@ -61,7 +61,12 @@ export const DirectionsUsecase = {
    * @throws 経路の取得に失敗した場合
    */
   async getRoute(params: DirectionsParams): Promise<RouteData> {
-    const { origin, destination, mode = "driving", alternatives = false } = params;
+    const {
+      origin,
+      destination,
+      mode = "driving",
+      alternatives = false,
+    } = params;
 
     const queryParams = new URLSearchParams({
       originLat: String(origin.lat),
