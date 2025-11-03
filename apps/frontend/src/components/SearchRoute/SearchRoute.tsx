@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AutocompleteSuggestion } from "@/usecases/autocomplete";
+import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
 import { SearchBar } from "./SearchBar";
 import { SuggestionsList } from "./SuggestionsList";

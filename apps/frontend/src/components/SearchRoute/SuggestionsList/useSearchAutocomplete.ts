@@ -3,7 +3,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import {
   AutocompleteUsecase,
   type AutocompleteSuggestion,
-} from "@/usecases/autocomplete";
+} from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
 
 /**

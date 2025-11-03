@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { MapRef } from "react-map-gl/mapbox";
-import { GeocodeUsecase } from "@/usecases/geocode";
-import { DirectionsUsecase } from "@/usecases/directions";
+import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
+import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
 import type { Location } from "@/types/location";
 import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
