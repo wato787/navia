@@ -15,7 +15,7 @@ const autocomplete = new Hono<AppBindings>();
 
 /**
  * GET /autocomplete
- * Google Places API Autocomplete ????????????
+ * Google Places API Autocomplete を使用して予測候補を取得
  */
 autocomplete.get("/", validateQuery(AutocompleteQuerySchema), async (c) => {
   const { input, latitude, longitude, radius, limit } = c.req.valid("query");
@@ -23,12 +23,12 @@ autocomplete.get("/", validateQuery(AutocompleteQuerySchema), async (c) => {
   try {
     const request: AutocompleteRequest = {
       input,
-      includedRegionCodes: ["JP"], // ????
+      includedRegionCodes: ["JP"], // 日本限定
       languageCode: "ja",
       maxResultCount: limit,
     };
 
-    // latitude ? longitude ??????????????? locationBias ???
+    // latitude と longitude の両方が指定されている場合のみ locationBias を追加
     if (latitude !== undefined && longitude !== undefined) {
       request.locationBias = {
         circle: {
@@ -61,7 +61,7 @@ autocomplete.get("/", validateQuery(AutocompleteQuerySchema), async (c) => {
       return c.json(
         {
           error: {
-            message: `Google Places API error: ${response.status} ${response.statusText}`,
+            message: \`Google Places API error: \${response.status} \${response.statusText}\`,
           },
         },
         500,

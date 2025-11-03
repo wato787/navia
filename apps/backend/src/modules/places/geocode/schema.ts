@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 /**
- * Google Geocoding API ???????
+ * Google Geocoding API クエリスキーマ
  */
 export const GeocodeQuerySchema = z.object({
-  address: z.string().min(1, "???????"),
+  address: z.string().min(1, "住所は必須です"),
 });
 
 /**
- * Google Geocoding API ??????
+ * Google Geocoding API レスポンス型
  */
 export type GeocodeResponse = {
   status: string;

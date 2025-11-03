@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 /**
- * Google Places API Autocomplete ???????
+ * Google Places API Autocomplete クエリスキーマ
  */
 export const AutocompleteQuerySchema = z.object({
-  input: z.string().min(1, "???????"),
+  input: z.string().min(1, "入力は必須です"),
   latitude: z
     .string()
     .optional()
@@ -12,7 +12,7 @@ export const AutocompleteQuerySchema = z.object({
     .refine(
       (val) =>
         val === undefined || (Number.isFinite(val) && val >= -90 && val <= 90),
-      { message: "???-90??90????????????" },
+      { message: "緯度は-90から90の範囲で指定してください" },
     ),
   longitude: z
     .string()
@@ -22,14 +22,14 @@ export const AutocompleteQuerySchema = z.object({
       (val) =>
         val === undefined ||
         (Number.isFinite(val) && val >= -180 && val <= 180),
-      { message: "???-180??180????????????" },
+      { message: "経度は-180から180の範囲で指定してください" },
     ),
   radius: z
     .string()
     .default("50000")
     .transform((val) => Number(val))
     .refine((val) => Number.isFinite(val) && val >= 0 && val <= 50000, {
-      message: "???0??50000????????????",
+      message: "半径は0から50000の範囲で指定してください",
     }),
   limit: z
     .string()
@@ -38,12 +38,12 @@ export const AutocompleteQuerySchema = z.object({
     .refine(
       (val) =>
         Number.isFinite(val) && Number.isInteger(val) && val >= 1 && val <= 5,
-      { message: "limit?1??5????????????" },
+      { message: "limitは1から5の範囲で指定してください" },
     ),
 });
 
 /**
- * Google Places API Autocomplete ??????
+ * Google Places API Autocomplete レスポンス型
  */
 export type AutocompleteResponse = {
   suggestions: Array<{
@@ -78,7 +78,7 @@ export type AutocompleteResponse = {
 };
 
 /**
- * Google Places API Autocomplete ?????
+ * Google Places API Autocomplete 予測結果型
  */
 export type GooglePlacesAutocompletePrediction = {
   placeId: string;
@@ -91,7 +91,7 @@ export type GooglePlacesAutocompletePrediction = {
 };
 
 /**
- * Google Places API Autocomplete ??????
+ * Google Places API Autocomplete リクエスト型
  */
 export type AutocompleteRequest = {
   input: string;

@@ -10,16 +10,16 @@ const directions = new Hono<AppBindings>();
 
 /**
  * GET /directions
- * Google Directions API ??????????
+ * Google Directions API を使用して経路を取得
  */
 directions.get("/", validateQuery(DirectionsQuerySchema), async (c) => {
   const { originLat, originLng, destLat, destLng, mode, alternatives } =
     c.req.valid("query");
 
   try {
-    const origin = `${originLat},${originLng}`;
-    const destination = `${destLat},${destLng}`;
-    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}&alternatives=${alternatives}&key=${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja`;
+    const origin = \`\${originLat},\${originLng}\`;
+    const destination = \`\${destLat},\${destLng}\`;
+    const url = \`https://maps.googleapis.com/maps/api/directions/json?origin=\${origin}&destination=\${destination}&mode=\${mode}&alternatives=\${alternatives}&key=\${ENV.GOOGLE_MAPS_API_KEY}&region=JP&language=ja\`;
 
     const response = await fetch(url);
     const data = (await response.json()) as DirectionsResponse;
@@ -29,7 +29,7 @@ directions.get("/", validateQuery(DirectionsQuerySchema), async (c) => {
       return c.json(
         {
           error: {
-            message: `Google Directions API error: ${data.status}`,
+            message: \`Google Directions API error: \${data.status}\`,
           },
         },
         500,
