@@ -28,9 +28,14 @@ vi.mock("../useRouteDisplay", () => ({
   })),
 }));
 
+// MapRefのモックに必要な型定義
+type MockedMap = {
+  getMap: ReturnType<typeof vi.fn>;
+};
+
 describe("useRouteSearch", () => {
   let queryClient: QueryClient;
-  let mockMap: { getMap: ReturnType<typeof vi.fn> };
+  let mockMap: MockedMap;
   let mockMapRef: { current: MapRef | null };
   let alertMock: ReturnType<typeof vi.fn>;
 
@@ -95,8 +100,12 @@ describe("useRouteSearch", () => {
       ],
     };
 
-    vi.mocked(GeocodeUsecase.geocode).mockResolvedValue(mockDestinationCoords);
-    vi.mocked(DirectionsUsecase.getRoute).mockResolvedValue(mockRoute);
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockDestinationCoords,
+    );
+    (DirectionsUsecase.getRoute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockRoute,
+    );
 
     const currentLocation = { lat: 35.6812, lng: 139.7671 };
     const { result } = renderHook(
@@ -104,7 +113,7 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "Tokyo Station", currentLocation });
+    result.current.mutate({ destination: "Tokyo Station" });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -143,14 +152,18 @@ describe("useRouteSearch", () => {
       ],
     };
 
-    vi.mocked(GeocodeUsecase.geocode).mockResolvedValue(mockDestinationCoords);
-    vi.mocked(DirectionsUsecase.getRoute).mockResolvedValue(mockRoute);
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockDestinationCoords,
+    );
+    (DirectionsUsecase.getRoute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockRoute,
+    );
 
     const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
       wrapper,
     });
 
-    result.current.mutate({ destination: "Shinjuku", currentLocation: null });
+    result.current.mutate({ destination: "Shinjuku" });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -167,7 +180,7 @@ describe("useRouteSearch", () => {
   });
 
   it("エラー時にアラートを表示する", async () => {
-    vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>).mockRejectedValue(
       new Error("Address not found"),
     );
 
@@ -175,7 +188,7 @@ describe("useRouteSearch", () => {
       wrapper,
     });
 
-    result.current.mutate({ destination: "Invalid", currentLocation: null });
+    result.current.mutate({ destination: "Invalid" });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -185,13 +198,15 @@ describe("useRouteSearch", () => {
   });
 
   it("エラーメッセージが提供されていない場合、デフォルトのエラーメッセージを表示する", async () => {
-    vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(new Error());
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error(),
+    );
 
     const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
       wrapper,
     });
 
-    result.current.mutate({ destination: "Dest", currentLocation: null });
+    result.current.mutate({ destination: "Dest" });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -223,10 +238,12 @@ describe("useRouteSearch", () => {
       ],
     };
 
-    vi.mocked(GeocodeUsecase.geocode)
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce(mockDestinationCoords1)
       .mockResolvedValueOnce(mockDestinationCoords2);
-    vi.mocked(DirectionsUsecase.getRoute).mockResolvedValue(mockRoute);
+    (DirectionsUsecase.getRoute as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockRoute,
+    );
 
     const currentLocation = { lat: 35.6812, lng: 139.7671 };
     const { result } = renderHook(
@@ -234,13 +251,13 @@ describe("useRouteSearch", () => {
       { wrapper },
     );
 
-    result.current.mutate({ destination: "Shibuya", currentLocation });
+    result.current.mutate({ destination: "Shibuya" });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    result.current.mutate({ destination: "Ikebukuro", currentLocation });
+    result.current.mutate({ destination: "Ikebukuro" });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -273,13 +290,13 @@ describe("useRouteSearch", () => {
     };
 
     // Promiseを遅延させて、isPending状態を確認できるようにする
-    vi.mocked(GeocodeUsecase.geocode).mockImplementation(
+    (GeocodeUsecase.geocode as ReturnType<typeof vi.fn>).mockImplementation(
       () =>
         new Promise((resolve) => {
           setTimeout(() => resolve(mockDestinationCoords), 100);
         }),
     );
-    vi.mocked(DirectionsUsecase.getRoute).mockImplementation(
+    (DirectionsUsecase.getRoute as ReturnType<typeof vi.fn>).mockImplementation(
       () =>
         new Promise((resolve) => {
           setTimeout(() => resolve(mockRoute), 100);
@@ -295,7 +312,7 @@ describe("useRouteSearch", () => {
     expect(result.current.isPending).toBe(false);
 
     act(() => {
-      result.current.mutate({ destination: "Destination", currentLocation });
+      result.current.mutate({ destination: "Destination" });
     });
 
     // mutate呼び出し後、isPendingがtrueになることを確認

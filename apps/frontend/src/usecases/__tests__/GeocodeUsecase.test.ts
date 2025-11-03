@@ -4,7 +4,7 @@ import { type GeocodeParams, GeocodeUsecase } from "../GeocodeUsecase";
 
 // fetchのモック
 const mockFetch = vi.fn();
-globalThis.fetch = mockFetch as typeof fetch;
+vi.stubGlobal("fetch", mockFetch);
 
 describe("GeocodeUsecase", () => {
   beforeEach(() => {

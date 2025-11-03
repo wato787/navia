@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import { useCurrentLocation } from "../useCurrentLocation";
 
 describe("useCurrentLocation", () => {
-  it("should initialize with null location", () => {
+  it("nullの位置で初期化される", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     expect(result.current.currentLocation).toBeNull();
   });
 
-  it("should update location on handleGeolocate", () => {
+  it("handleGeolocateで位置を更新できる", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {
@@ -37,7 +37,7 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("should update location on multiple calls", () => {
+  it("複数回の呼び出しで位置を更新できる", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition1: GeolocationPosition = {
@@ -89,7 +89,7 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("should log location to console", () => {
+  it("位置をコンソールにログ出力する", () => {
     const consoleLogSpy = vi.spyOn(console, "log");
     const { result } = renderHook(() => useCurrentLocation());
 
@@ -117,7 +117,7 @@ describe("useCurrentLocation", () => {
     consoleLogSpy.mockRestore();
   });
 
-  it("should maintain same handler reference (useCallback)", () => {
+  it("同じハンドラー参照を維持する（useCallback）", () => {
     const { result, rerender } = renderHook(() => useCurrentLocation());
 
     const firstHandler = result.current.handleGeolocate;
@@ -129,7 +129,7 @@ describe("useCurrentLocation", () => {
     expect(firstHandler).toBe(secondHandler);
   });
 
-  it("should handle negative coordinates", () => {
+  it("負の座標を処理できる", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {
@@ -157,7 +157,7 @@ describe("useCurrentLocation", () => {
     });
   });
 
-  it("should handle zero coordinates", () => {
+  it("ゼロの座標を処理できる", () => {
     const { result } = renderHook(() => useCurrentLocation());
 
     const mockPosition: GeolocationPosition = {

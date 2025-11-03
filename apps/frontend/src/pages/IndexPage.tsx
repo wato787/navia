@@ -29,9 +29,7 @@ function MapContent({ mapRef }: MapContentProps) {
   return (
     <>
       <SearchRoute
-        onSearch={(destination) =>
-          searchRoute({ destination, currentLocation })
-        }
+        onSearch={(destination) => searchRoute({ destination })}
         currentLocation={currentLocation}
       />
       <GeolocateControl

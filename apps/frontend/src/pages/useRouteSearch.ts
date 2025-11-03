@@ -8,7 +8,6 @@ import { useRouteDisplay } from "./useRouteDisplay";
 
 type RouteSearchParams = {
   destination: string;
-  currentLocation: Location | null;
 };
 
 /**

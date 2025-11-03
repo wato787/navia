@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { Location } from "@/types/location";
-import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
+import {
+  type AutocompleteSuggestion,
+  AutocompleteUsecase,
+} from "@/usecases/AutocompleteUsecase";
 
 /**
- * Debounce付きのオートコンプリートフック
- * ユースケース層のAutocompleteUsecaseを使用
+ * Debounce付きのGoogle Places Autocompleteフック
  */
 export function useSearchAutocomplete(
   query: string,
@@ -17,8 +19,8 @@ export function useSearchAutocomplete(
   const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
-  return useQuery({
-    queryKey: ["autocomplete", debouncedQuery, options?.proximity],
+  const useSearchAutocompleteQuery = useQuery<AutocompleteSuggestion[] | null>({
+    queryKey: ["geocode-autocomplete", debouncedQuery, options?.proximity],
     queryFn: async () => {
       return await AutocompleteUsecase.fetchSuggestions({
         query: debouncedQuery,
@@ -29,4 +31,6 @@ export function useSearchAutocomplete(
     enabled: debouncedQuery.trim().length > 0,
     staleTime: 1000 * 60 * 5, // 5分間キャッシュ
   });
+
+  return useSearchAutocompleteQuery;
 }

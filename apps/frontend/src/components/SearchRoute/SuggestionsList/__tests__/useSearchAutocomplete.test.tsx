@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
@@ -18,6 +18,7 @@ vi.mock("@/hooks/useDebounce", () => ({
 
 describe("useSearchAutocomplete", () => {
   let queryClient: QueryClient;
+  let wrapper: ({ children }: { children: ReactNode }) => ReactElement;
 
   beforeEach(() => {
     queryClient = new QueryClient({
@@ -28,21 +29,21 @@ describe("useSearchAutocomplete", () => {
       },
     });
 
+    wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
     vi.clearAllMocks();
   });
 
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-
-  it("should not fetch when query is empty", () => {
+  it("クエリが空の場合、フェッチしない", () => {
     const { result } = renderHook(() => useSearchAutocomplete(""), { wrapper });
 
     expect(result.current.isFetching).toBe(false);
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
   });
 
-  it("should not fetch when query is only whitespace", () => {
+  it("クエリが空白のみの場合、フェッチしない", () => {
     const { result } = renderHook(() => useSearchAutocomplete("   "), {
       wrapper,
     });
@@ -51,7 +52,7 @@ describe("useSearchAutocomplete", () => {
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
   });
 
-  it("should fetch suggestions for valid query", async () => {
+  it("有効なクエリで候補を取得できる", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -75,9 +76,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const { result } = renderHook(() => useSearchAutocomplete("Tokyo"), {
       wrapper,
@@ -96,7 +97,7 @@ describe("useSearchAutocomplete", () => {
     expect(result.current.data).toEqual(mockSuggestions);
   });
 
-  it("should pass proximity option correctly", async () => {
+  it("proximityオプションを正しく渡せる", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -110,9 +111,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const proximity = { lat: 35.6812, lng: 139.7671 };
 
@@ -132,7 +133,7 @@ describe("useSearchAutocomplete", () => {
     });
   });
 
-  it("should pass limit option correctly", async () => {
+  it("limitオプションを正しく渡せる", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -146,9 +147,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const { result } = renderHook(
       () => useSearchAutocomplete("Shinjuku", { limit: 5 }),
@@ -166,7 +167,7 @@ describe("useSearchAutocomplete", () => {
     });
   });
 
-  it("should pass both proximity and limit options", async () => {
+  it("proximityとlimitの両方のオプションを渡せる", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -180,9 +181,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const proximity = { lat: 35.6812, lng: 139.7671 };
 
@@ -202,10 +203,10 @@ describe("useSearchAutocomplete", () => {
     });
   });
 
-  it("should return error state on failure", async () => {
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockRejectedValue(
-      new Error("API error"),
-    );
+  it("エラー時にエラーステートを返す", async () => {
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockRejectedValue(new Error("API error"));
 
     const { result } = renderHook(() => useSearchAutocomplete("Error"), {
       wrapper,
@@ -219,7 +220,7 @@ describe("useSearchAutocomplete", () => {
     expect((result.current.error as Error).message).toBe("API error");
   });
 
-  it("should cache results correctly", async () => {
+  it("結果を正しくキャッシュする", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -233,9 +234,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const { result: result1 } = renderHook(
       () => useSearchAutocomplete("Shinagawa"),
@@ -261,8 +262,10 @@ describe("useSearchAutocomplete", () => {
     expect(result2.current.data).toEqual(mockSuggestions);
   });
 
-  it("should handle empty results", async () => {
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue([]);
+  it("空の結果を処理できる", async () => {
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue([]);
 
     const { result } = renderHook(() => useSearchAutocomplete("NonExistent"), {
       wrapper,
@@ -275,7 +278,7 @@ describe("useSearchAutocomplete", () => {
     expect(result.current.data).toEqual([]);
   });
 
-  it("should manage loading state correctly", async () => {
+  it("ローディング状態を正しく管理する", async () => {
     const mockSuggestions: AutocompleteSuggestion[] = [
       {
         placeId: "1",
@@ -289,9 +292,9 @@ describe("useSearchAutocomplete", () => {
       },
     ];
 
-    vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue(
-      mockSuggestions,
-    );
+    (
+      AutocompleteUsecase.fetchSuggestions as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(mockSuggestions);
 
     const { result } = renderHook(() => useSearchAutocomplete("Ueno"), {
       wrapper,

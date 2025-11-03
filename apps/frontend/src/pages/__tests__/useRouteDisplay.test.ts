@@ -40,14 +40,14 @@ describe("useRouteDisplay", () => {
     };
   });
 
-  it("should return displayRoute function", () => {
+  it("displayRoute関数を返す", () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     expect(result.current.displayRoute).toBeDefined();
     expect(typeof result.current.displayRoute).toBe("function");
   });
 
-  it("should do nothing when mapRef is null", async () => {
+  it("mapRefがnullの場合、何も実行しない", async () => {
     const nullMapRef: { current: MapRef | null } = { current: null };
     const { result } = renderHook(() => useRouteDisplay(nullMapRef));
 
@@ -73,7 +73,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.addSource).not.toHaveBeenCalled();
   });
 
-  it("should remove existing route and add new one", async () => {
+  it("既存の経路を削除して新しい経路を追加する", async () => {
     mockMap.getSource.mockReturnValue(true);
     mockMap.getLayer.mockReturnValue(true);
 
@@ -108,7 +108,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.fitBounds).toHaveBeenCalled();
   });
 
-  it("should skip removal when no existing source", async () => {
+  it("既存のソースがない場合、削除をスキップする", async () => {
     mockMap.getSource.mockReturnValue(null);
 
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
@@ -137,7 +137,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.addSource).toHaveBeenCalled();
   });
 
-  it("should skip layer removal when no existing layer", async () => {
+  it("既存のレイヤーがない場合、レイヤー削除をスキップする", async () => {
     mockMap.getSource.mockReturnValue(true);
     mockMap.getLayer.mockReturnValue(null);
 
@@ -166,7 +166,7 @@ describe("useRouteDisplay", () => {
     expect(mockMap.removeSource).toHaveBeenCalledWith("route");
   });
 
-  it("should call fitBounds with correct padding", async () => {
+  it("正しいパディングでfitBoundsを呼び出す", async () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const routeGeoJson: GeoJSON.FeatureCollection = {
@@ -199,7 +199,7 @@ describe("useRouteDisplay", () => {
     );
   });
 
-  it("should maintain same function reference (useCallback)", () => {
+  it("同じ関数参照を維持する（useCallback）", () => {
     const { result, rerender } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const firstDisplayRoute = result.current.displayRoute;
@@ -211,7 +211,7 @@ describe("useRouteDisplay", () => {
     expect(firstDisplayRoute).toBe(secondDisplayRoute);
   });
 
-  it("should handle routes with multiple coordinates", async () => {
+  it("複数の座標を持つ経路を処理できる", async () => {
     const { result } = renderHook(() => useRouteDisplay(mockMapRef));
 
     const routeGeoJson: GeoJSON.FeatureCollection = {

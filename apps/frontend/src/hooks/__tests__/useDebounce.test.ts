@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import { useDebounce } from "../useDebounce";
 
 describe("useDebounce", () => {
-  it("should return initial value immediately", () => {
+  it("初期値を即座に返す", () => {
     const { result } = renderHook(() => useDebounce("initial", 500));
 
     expect(result.current).toBe("initial");
   });
 
-  it("should return new value after delay", async () => {
+  it("遅延後に新しい値を返す", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -31,7 +31,7 @@ describe("useDebounce", () => {
     );
   });
 
-  it("should debounce multiple rapid changes", async () => {
+  it("複数の迅速な変更をデバウンスする", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -53,7 +53,7 @@ describe("useDebounce", () => {
     );
   });
 
-  it("should handle number values", async () => {
+  it("数値を処理できる", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -73,7 +73,7 @@ describe("useDebounce", () => {
     );
   });
 
-  it("should handle object values", async () => {
+  it("オブジェクト値を処理できる", async () => {
     const obj1 = { name: "John", age: 20 };
     const obj2 = { name: "Jane", age: 25 };
 
@@ -96,7 +96,7 @@ describe("useDebounce", () => {
     );
   });
 
-  it("should handle delay changes", async () => {
+  it("遅延時間の変更を処理できる", async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -114,7 +114,7 @@ describe("useDebounce", () => {
     );
   });
 
-  it("should cleanup timer on unmount", () => {
+  it("アンマウント時にタイマーをクリーンアップする", () => {
     vi.useFakeTimers();
 
     const { unmount } = renderHook(() => useDebounce("value", 500));
