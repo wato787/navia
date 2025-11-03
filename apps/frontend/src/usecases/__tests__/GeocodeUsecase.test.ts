@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GeocodeUsecase, type GeocodeParams } from "../GeocodeUsecase";
 import type { Location } from "@/types/location";
+import { type GeocodeParams, GeocodeUsecase } from "../GeocodeUsecase";
 
 // fetchのモック
 const mockFetch = vi.fn();

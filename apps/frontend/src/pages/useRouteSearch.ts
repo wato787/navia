@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import type { MapRef } from "react-map-gl/mapbox";
-import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
-import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
 import type { Location } from "@/types/location";
+import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
+import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
 import { INITIAL_VIEW_STATE } from "./const";
 import { useRouteDisplay } from "./useRouteDisplay";
 

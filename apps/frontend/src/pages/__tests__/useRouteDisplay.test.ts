@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
+import type { MapRef } from "react-map-gl/mapbox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouteDisplay } from "../useRouteDisplay";
-import type { MapRef } from "react-map-gl/mapbox";
 
 vi.mock("@/lib/mapbox", () => ({
   calculateBounds: vi.fn(() => [
@@ -224,8 +224,8 @@ describe("useRouteDisplay", () => {
             type: "LineString",
             coordinates: [
               [139.7671, 35.6812],
-              [139.7500, 35.6850],
-              [139.7300, 35.6900],
+              [139.75, 35.685],
+              [139.73, 35.69],
               [139.6917, 35.6895],
             ],
           },

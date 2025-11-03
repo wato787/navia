@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
-import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
+import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
 import { useSearchAutocomplete } from "./useSearchAutocomplete";
 
 type SuggestionsListProps = {

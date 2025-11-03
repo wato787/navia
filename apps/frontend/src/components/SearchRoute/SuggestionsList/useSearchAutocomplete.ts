@@ -1,10 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
-import {
-  AutocompleteUsecase,
-  type AutocompleteSuggestion,
-} from "@/usecases/AutocompleteUsecase";
 import type { Location } from "@/types/location";
+import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
 
 /**
  * Debounce付きのオートコンプリートフック

@@ -1,5 +1,5 @@
-import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
@@ -13,7 +13,7 @@ vi.mock("@/usecases/AutocompleteUsecase", () => ({
 }));
 
 vi.mock("@/hooks/useDebounce", () => ({
-  useDebounce: vi.fn(<T>(value: T) => value),
+  useDebounce: vi.fn((value: unknown) => value),
 }));
 
 describe("useSearchAutocomplete", () => {
@@ -36,20 +36,16 @@ describe("useSearchAutocomplete", () => {
   );
 
   it("should not fetch when query is empty", () => {
-    const { result } = renderHook(
-      () => useSearchAutocomplete(""),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete(""), { wrapper });
 
     expect(result.current.isFetching).toBe(false);
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
   });
 
   it("should not fetch when query is only whitespace", () => {
-    const { result } = renderHook(
-      () => useSearchAutocomplete("   "),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete("   "), {
+      wrapper,
+    });
 
     expect(result.current.isFetching).toBe(false);
     expect(AutocompleteUsecase.fetchSuggestions).not.toHaveBeenCalled();
@@ -83,10 +79,9 @@ describe("useSearchAutocomplete", () => {
       mockSuggestions,
     );
 
-    const { result } = renderHook(
-      () => useSearchAutocomplete("Tokyo"),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete("Tokyo"), {
+      wrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -111,7 +106,7 @@ describe("useSearchAutocomplete", () => {
           secondaryText: "Tokyo",
         },
         types: ["station"],
-        location: { latitude: 35.6580, longitude: 139.7016 },
+        location: { latitude: 35.658, longitude: 139.7016 },
       },
     ];
 
@@ -212,10 +207,9 @@ describe("useSearchAutocomplete", () => {
       new Error("API error"),
     );
 
-    const { result } = renderHook(
-      () => useSearchAutocomplete("Error"),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete("Error"), {
+      wrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -270,10 +264,9 @@ describe("useSearchAutocomplete", () => {
   it("should handle empty results", async () => {
     vi.mocked(AutocompleteUsecase.fetchSuggestions).mockResolvedValue([]);
 
-    const { result } = renderHook(
-      () => useSearchAutocomplete("NonExistent"),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete("NonExistent"), {
+      wrapper,
+    });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -300,10 +293,9 @@ describe("useSearchAutocomplete", () => {
       mockSuggestions,
     );
 
-    const { result } = renderHook(
-      () => useSearchAutocomplete("Ueno"),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSearchAutocomplete("Ueno"), {
+      wrapper,
+    });
 
     expect(result.current.isLoading).toBe(true);
 

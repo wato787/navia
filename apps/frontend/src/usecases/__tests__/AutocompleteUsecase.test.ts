@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  AutocompleteUsecase,
   type AutocompleteSuggestion,
+  AutocompleteUsecase,
 } from "../AutocompleteUsecase";
 
 // fetchのモック

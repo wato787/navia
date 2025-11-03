@@ -1,8 +1,8 @@
-import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MapRef } from "react-map-gl/mapbox";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DirectionsUsecase } from "@/usecases/DirectionsUsecase";
 import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
 import { useRouteSearch } from "../useRouteSearch";
@@ -58,10 +58,9 @@ describe("useRouteSearch", () => {
   );
 
   it("should initialize with idle status", () => {
-    const { result } = renderHook(
-      () => useRouteSearch(mockMapRef, null),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
+      wrapper,
+    });
 
     expect(result.current.status).toBe("idle");
     expect(result.current.isPending).toBe(false);
@@ -134,10 +133,9 @@ describe("useRouteSearch", () => {
     vi.mocked(GeocodeUsecase.geocode).mockResolvedValue(mockDestinationCoords);
     vi.mocked(DirectionsUsecase.getRoute).mockResolvedValue(mockRoute);
 
-    const { result } = renderHook(
-      () => useRouteSearch(mockMapRef, null),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
+      wrapper,
+    });
 
     result.current.mutate({ destination: "Shinjuku", currentLocation: null });
 
@@ -162,10 +160,9 @@ describe("useRouteSearch", () => {
       new Error("Address not found"),
     );
 
-    const { result } = renderHook(
-      () => useRouteSearch(mockMapRef, null),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
+      wrapper,
+    });
 
     result.current.mutate({ destination: "Invalid", currentLocation: null });
 
@@ -183,10 +180,9 @@ describe("useRouteSearch", () => {
 
     vi.mocked(GeocodeUsecase.geocode).mockRejectedValue(new Error());
 
-    const { result } = renderHook(
-      () => useRouteSearch(mockMapRef, null),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useRouteSearch(mockMapRef, null), {
+      wrapper,
+    });
 
     result.current.mutate({ destination: "Dest", currentLocation: null });
 
