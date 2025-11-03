@@ -59,7 +59,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??????");
       expect(res.status).toBe(200);
@@ -92,7 +92,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??????");
       expect(res.status).toBe(200);
@@ -131,7 +131,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(200);
@@ -162,7 +162,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=Tokyo Tower");
       expect(res.status).toBe(200);
@@ -185,7 +185,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=???????");
       expect(res.status).toBe(500);
@@ -206,7 +206,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=test");
       expect(res.status).toBe(404);
@@ -219,7 +219,7 @@ describe("Geocode API - GET /", () => {
     test("????????????????", async () => {
       global.fetch = mock(async () => {
         throw new Error("Network error");
-      });
+      }) as any;
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -235,7 +235,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -255,7 +255,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);
@@ -275,7 +275,7 @@ describe("Geocode API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?address=??");
       expect(res.status).toBe(500);

@@ -105,7 +105,7 @@ describe("Autocomplete API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(200);
@@ -160,7 +160,7 @@ describe("Autocomplete API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?input=??&latitude=35.6581&longitude=139.7014&radius=1000",
@@ -195,7 +195,7 @@ describe("Autocomplete API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?input=???");
       expect(res.status).toBe(200);
@@ -214,7 +214,7 @@ describe("Autocomplete API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?input=???????");
       expect(res.status).toBe(200);
@@ -242,7 +242,7 @@ describe("Autocomplete API - GET /", () => {
             headers: { "Content-Type": "application/json" },
           },
         );
-      });
+      }) as any;
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);
@@ -255,7 +255,7 @@ describe("Autocomplete API - GET /", () => {
     test("????????????????", async () => {
       global.fetch = mock(async () => {
         throw new Error("Network error");
-      });
+      }) as any;
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);
@@ -273,7 +273,7 @@ describe("Autocomplete API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request("/?input=??");
       expect(res.status).toBe(500);

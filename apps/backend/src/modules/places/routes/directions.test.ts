@@ -127,7 +127,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -172,7 +172,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671&mode=walking",
@@ -210,7 +210,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -244,7 +244,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671&alternatives=true",
@@ -267,7 +267,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -290,7 +290,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -305,7 +305,7 @@ describe("Directions API - GET /", () => {
     test("????????????????", async () => {
       global.fetch = mock(async () => {
         throw new Error("Network error");
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",
@@ -323,7 +323,7 @@ describe("Directions API - GET /", () => {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      });
+      }) as any;
 
       const res = await app.request(
         "/?originLat=35.6581&originLng=139.7014&destLat=35.6812&destLng=139.7671",

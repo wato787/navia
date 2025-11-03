@@ -10,7 +10,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
-    "types": ["bun-types"],
+    "types": ["@types/bun"],
     "resolveJsonModule": true,
     "moduleDetection": "force"
   },
