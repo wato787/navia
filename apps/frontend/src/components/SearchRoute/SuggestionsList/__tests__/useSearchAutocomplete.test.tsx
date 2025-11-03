@@ -1,9 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useSearchAutocomplete } from "../useSearchAutocomplete";
-import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
 import type { AutocompleteSuggestion } from "@/usecases/AutocompleteUsecase";
+import { AutocompleteUsecase } from "@/usecases/AutocompleteUsecase";
+import { useSearchAutocomplete } from "../useSearchAutocomplete";
 
 vi.mock("@/usecases/AutocompleteUsecase", () => ({
   AutocompleteUsecase: {
@@ -12,7 +13,7 @@ vi.mock("@/usecases/AutocompleteUsecase", () => ({
 }));
 
 vi.mock("@/hooks/useDebounce", () => ({
-  useDebounce: vi.fn((value) => value),
+  useDebounce: vi.fn(<T>(value: T) => value),
 }));
 
 describe("useSearchAutocomplete", () => {
@@ -30,7 +31,7 @@ describe("useSearchAutocomplete", () => {
     vi.clearAllMocks();
   });
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
