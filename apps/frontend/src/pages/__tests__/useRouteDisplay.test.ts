@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouteDisplay } from "../useRouteDisplay";
 import type { MapRef } from "react-map-gl/mapbox";
 
@@ -11,7 +11,15 @@ vi.mock("@/lib/mapbox", () => ({
 }));
 
 describe("useRouteDisplay", () => {
-  let mockMap: any;
+  let mockMap: {
+    getSource: ReturnType<typeof vi.fn>;
+    getLayer: ReturnType<typeof vi.fn>;
+    removeLayer: ReturnType<typeof vi.fn>;
+    removeSource: ReturnType<typeof vi.fn>;
+    addSource: ReturnType<typeof vi.fn>;
+    addLayer: ReturnType<typeof vi.fn>;
+    fitBounds: ReturnType<typeof vi.fn>;
+  };
   let mockMapRef: React.RefObject<MapRef | null>;
 
   beforeEach(() => {
@@ -28,7 +36,7 @@ describe("useRouteDisplay", () => {
     mockMapRef = {
       current: {
         getMap: vi.fn(() => mockMap),
-      } as any,
+      } as unknown as MapRef,
     };
   });
 

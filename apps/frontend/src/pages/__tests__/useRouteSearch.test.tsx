@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouteSearch } from "../useRouteSearch";
 import type { MapRef } from "react-map-gl/mapbox";
 import { GeocodeUsecase } from "@/usecases/GeocodeUsecase";
@@ -26,7 +26,7 @@ vi.mock("../useRouteDisplay", () => ({
 
 describe("useRouteSearch", () => {
   let queryClient: QueryClient;
-  let mockMap: any;
+  let mockMap: { getMap: ReturnType<typeof vi.fn> };
   let mockMapRef: React.RefObject<MapRef | null>;
 
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe("useRouteSearch", () => {
     };
 
     mockMapRef = {
-      current: mockMap as any,
+      current: mockMap as unknown as MapRef,
     };
 
     vi.clearAllMocks();
