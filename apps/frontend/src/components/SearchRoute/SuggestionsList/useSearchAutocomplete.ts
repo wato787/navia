@@ -8,7 +8,7 @@ import type { Location } from "@/types/location";
 
 /**
  * Debounce付きのオートコンプリートフック
- * ユースケース層のAutocompleteUsecaseをReact Queryでラップし、UIロジック（debounce）を追加
+ * ユースケース層のAutocompleteUsecaseを使用
  */
 export function useSearchAutocomplete(
   query: string,
@@ -20,12 +20,9 @@ export function useSearchAutocomplete(
   const debounceMs = 500;
   const debouncedQuery = useDebounce(query, debounceMs);
 
-  return useQuery<AutocompleteSuggestion[]>({
-    queryKey: ["autocomplete", debouncedQuery, options?.proximity, options?.limit],
+  return useQuery({
+    queryKey: ["autocomplete", debouncedQuery, options?.proximity],
     queryFn: async () => {
-      if (!debouncedQuery.trim()) {
-        return [];
-      }
       return await AutocompleteUsecase.fetchSuggestions({
         query: debouncedQuery,
         proximity: options?.proximity,

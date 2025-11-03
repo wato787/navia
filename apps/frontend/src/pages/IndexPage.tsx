@@ -24,12 +24,14 @@ type MapContentProps = {
 
 function MapContent({ mapRef }: MapContentProps) {
   const { currentLocation, handleGeolocate } = useCurrentLocation();
-  const { searchRoute } = useRouteSearch(mapRef, currentLocation);
+  const { mutate: searchRoute } = useRouteSearch(mapRef, currentLocation);
 
   return (
     <>
       <SearchRoute
-        onSearch={(destination) => searchRoute(destination)}
+        onSearch={(destination) =>
+          searchRoute({ destination, currentLocation })
+        }
         currentLocation={currentLocation}
       />
       <GeolocateControl
