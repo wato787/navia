@@ -4,7 +4,7 @@ import {
   type AutocompleteSuggestion,
 } from "../AutocompleteUsecase";
 
-// fetch????
+// fetchのモック
 const mockFetch = vi.fn();
 globalThis.fetch = mockFetch as typeof fetch;
 
@@ -14,7 +14,7 @@ describe("AutocompleteUsecase", () => {
   });
 
   describe("fetchSuggestions", () => {
-    it("????????????????????", async () => {
+    it("正常にオートコンプリート候補を取得できる", async () => {
       const mockSuggestions: AutocompleteSuggestion[] = [
         {
           placeId: "place-1",
@@ -61,7 +61,7 @@ describe("AutocompleteUsecase", () => {
       );
     });
 
-    it("proximity???????????????????????????????", async () => {
+    it("proximityパラメータを指定した場合、緯度経度がクエリパラメータに含まれる", async () => {
       const mockSuggestions: AutocompleteSuggestion[] = [];
 
       mockFetch.mockResolvedValueOnce({
@@ -86,7 +86,7 @@ describe("AutocompleteUsecase", () => {
       );
     });
 
-    it("limit????????5", async () => {
+    it("limitのデフォルト値は5", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: [] }),
@@ -101,7 +101,7 @@ describe("AutocompleteUsecase", () => {
       );
     });
 
-    it("API??????????????????????", async () => {
+    it("APIレスポンスがエラーの場合、エラーをスローする", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         statusText: "Bad Request",
@@ -113,7 +113,7 @@ describe("AutocompleteUsecase", () => {
       ).rejects.toThrow();
     });
 
-    it("??????data??????????????????", async () => {
+    it("レスポンスのdataが配列でない場合、エラーをスローする", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: null }),
@@ -124,7 +124,7 @@ describe("AutocompleteUsecase", () => {
       ).rejects.toThrow();
     });
 
-    it("location????????suggestions?????????", async () => {
+    it("locationがオプショナルなsuggestionsも正常に処理できる", async () => {
       const mockSuggestions: AutocompleteSuggestion[] = [
         {
           placeId: "place-1",
@@ -150,7 +150,7 @@ describe("AutocompleteUsecase", () => {
       expect(result[0].location).toBeUndefined();
     });
 
-    it("??????????API????????", async () => {
+    it("空のクエリでも適切にAPIリクエストを行う", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: [] }),
