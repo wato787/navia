@@ -9,7 +9,7 @@ import type { Location } from "@/types/location";
 /**
  * Google Places API Place Details のレスポンス型
  */
-interface PlaceDetailsResponse {
+type PlaceDetailsResponse = {
   id: string;
   displayName: {
     text: string;
@@ -24,7 +24,7 @@ interface PlaceDetailsResponse {
 /**
  * Google Directions API のレスポンス型
  */
-interface DirectionsResponse {
+type DirectionsResponse = {
   status: string;
   routes?: Array<{
     legs: Array<{
@@ -59,7 +59,7 @@ interface DirectionsResponse {
 /**
  * Google Places API Autocomplete のレスポンス型
  */
-export interface GooglePlacesAutocompletePrediction {
+export type GooglePlacesAutocompletePrediction = {
   placeId: string;
   description: string;
   structuredFormatting: {

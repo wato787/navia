@@ -22,7 +22,7 @@ const AutocompleteQuerySchema = z.object({
 /**
  * Google Places API Autocomplete ???????
  */
-interface AutocompleteResponse {
+type AutocompleteResponse = {
   suggestions: Array<{
     placePrediction: {
       placeId: string;
@@ -57,7 +57,7 @@ interface AutocompleteResponse {
 /**
  * Google Places API Autocomplete ???????
  */
-interface GooglePlacesAutocompletePrediction {
+type GooglePlacesAutocompletePrediction = {
   placeId: string;
   description: string;
   structuredFormatting: {
@@ -70,7 +70,7 @@ interface GooglePlacesAutocompletePrediction {
 /**
  * Google Places API Autocomplete ???????
  */
-interface AutocompleteRequest {
+type AutocompleteRequest = {
   input: string;
   locationBias?: {
     circle: {
@@ -141,7 +141,7 @@ places.get(
               message: `Google Places API error: ${response.status} ${response.statusText}`,
             },
           },
-          response.status,
+          500,
         );
       }
 
