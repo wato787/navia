@@ -13,10 +13,37 @@ const places = new Hono<AppBindings>();
  */
 const AutocompleteQuerySchema = z.object({
   input: z.string().min(1, "??????????"),
-  latitude: z.coerce.number().optional(),
-  longitude: z.coerce.number().optional(),
-  radius: z.coerce.number().default(50000),
-  limit: z.coerce.number().default(5),
+  latitude: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number(val) : undefined))
+    .refine(
+      (val) => val === undefined || (Number.isFinite(val) && val >= -90 && val <= 90),
+      { message: "??????-90??90?????????????" },
+    ),
+  longitude: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number(val) : undefined))
+    .refine(
+      (val) => val === undefined || (Number.isFinite(val) && val >= -180 && val <= 180),
+      { message: "??????-180??180?????????????" },
+    ),
+  radius: z
+    .string()
+    .default("50000")
+    .transform((val) => Number(val))
+    .refine((val) => Number.isFinite(val) && val >= 0 && val <= 50000, {
+      message: "?????0??50000?????????????",
+    }),
+  limit: z
+    .string()
+    .default("5")
+    .transform((val) => Number(val))
+    .refine(
+      (val) => Number.isFinite(val) && Number.isInteger(val) && val >= 1 && val <= 5,
+      { message: "????1??5?????????" },
+    ),
 });
 
 /**
