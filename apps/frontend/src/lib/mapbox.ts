@@ -22,4 +22,3 @@ export function calculateBounds(
     ] as [[number, number], [number, number]],
   );
 }
-
