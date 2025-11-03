@@ -3,10 +3,6 @@
 // Mapbox設定
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN ?? "";
 
-// Google Maps API設定（Places、Geocoding、Directions APIなどに使用）
-export const GOOGLE_MAPS_API_KEY =
-  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
-
 // Backend API設定
 export const BACKEND_API_URL =
   import.meta.env.VITE_BACKEND_API_URL ?? "http://localhost:8787";
