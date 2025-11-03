@@ -28,7 +28,7 @@ vi.mock("../useRouteDisplay", () => ({
 describe("useRouteSearch", () => {
   let queryClient: QueryClient;
   let mockMap: { getMap: ReturnType<typeof vi.fn> };
-  let mockMapRef: React.RefObject<MapRef | null>;
+  let mockMapRef: { current: MapRef | null };
 
   beforeEach(() => {
     queryClient = new QueryClient({

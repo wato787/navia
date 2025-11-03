@@ -20,7 +20,7 @@ describe("useRouteDisplay", () => {
     addLayer: ReturnType<typeof vi.fn>;
     fitBounds: ReturnType<typeof vi.fn>;
   };
-  let mockMapRef: React.RefObject<MapRef | null>;
+  let mockMapRef: { current: MapRef | null };
 
   beforeEach(() => {
     mockMap = {
@@ -48,7 +48,7 @@ describe("useRouteDisplay", () => {
   });
 
   it("should do nothing when mapRef is null", async () => {
-    const nullMapRef: React.RefObject<MapRef | null> = { current: null };
+    const nullMapRef: { current: MapRef | null } = { current: null };
     const { result } = renderHook(() => useRouteDisplay(nullMapRef));
 
     const routeGeoJson: GeoJSON.FeatureCollection = {
